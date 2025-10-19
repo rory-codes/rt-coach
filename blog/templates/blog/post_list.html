@@ -1,0 +1,11 @@
+<!doctype html>
+<h1>Posts</h1>
+{% if object_list %}
+  <ul>
+  {% for post in object_list %}
+    <li>{{ post.title }}</li>
+  {% endfor %}
+  </ul>
+{% else %}
+  <p>No posts yet.</p>
+{% endif %}

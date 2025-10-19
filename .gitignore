@@ -1,0 +1,12 @@
+.env
+.venv
+env.py
+.venv/core.Microsoft*
+*.sqlite3
+db.sqlite3
+node_modules/
+__pycache__/
+*.py[cod]
+*.pyo
+core.mongo*
+core.python*
