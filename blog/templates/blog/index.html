@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="row">
+  <!-- Blog Entries Column -->
+  <div class="col-12 mt-3 left">
+    <div class="row">
+      {% for post in post_list %}
+        <div class="col-md-4">
+          <div class="card mb-4 h-100">
+            <div class="image-container">
+              <div class="image-flash">
+                <p class="author">User: {{ post.author }}</p>
+              </div>
+              {# <img class="scale" src="{{ post.thumbnail.url }}" alt=""> #}
+            </div>
+
+            <div class="card-body">
+              <a href="#" class="post-link">
+                <h2 class="card-title h5 m-0">{{ post.title }}</h2>
+              </a>
+              <hr />
+              <p class="card-text text-muted h6 mb-0">
+                <time datetime="{{ post.created_on|date:'c' }}">{{ post.created_on }}</time>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {% if forloop.counter|divisibleby:3 %}
+          </div><div class="row">
+        {% endif %}
+      {% empty %}
+        <div class="col-12">
+          <p class="faded">No posts yet.</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% if is_paginated %}
+<nav aria-label="Page navigation">
+  <ul class="pagination justify-content-center">
+    {% if page_obj.has_previous %}
+      <li class="page-item">
+        <a href="?page={{ page_obj.previous_page_number }}" class="page-link">&laquo; Prev</a>
+      </li>
+    {% endif %}
+
+    {% if page_obj.has_next %}
+      <li class="page-item">
+        <a href="?page={{ page_obj.next_page_number }}" class="page-link">Next &raquo;</a>
+      </li>
+    {% endif %}
+  </ul>
+</nav>
+{% endif %}
+{% endblock %}
