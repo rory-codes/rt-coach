@@ -20,7 +20,8 @@
         rel="stylesheet"
         integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x"
         crossorigin="anonymous">
-
+  <!-- Favicon-->
+   <link rel="icon" href="{% static 'img/favicon.ico' %}">
   <!-- Project CSS -->
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   {% block extra_head %}{% endblock %}
@@ -54,17 +55,17 @@
   </nav>
 
   <!-- Hero -->
-  {% block hero %}
-  <section class="masthead light-bg">
-    <div class="masthead-image"></div>
-    <div class="masthead-text">
-      <h1 class="h3 m-0" style="font-family: Poppins, var(--rt-font); font-weight:700;">
-        Welcome to <span class="red-o">RT Coach</span>
-      </h1>
-      <p class="mb-0 faded">Discuss fitness, track metrics and view content</p>
-    </div>
-  </section>
-  {% endblock %}
+{% block hero %}
+<section class="masthead light-bg">
+  <div class="masthead-image">
+    <img class="masthead-photo" src="{% static 'img/rt-coach-hero.png' %}" alt="Athlete training with RT Coach" />
+  </div>
+  <div class="masthead-text">
+    <h1 class="h3 m-0">Welcome to <span class="red-o">RT Coach</span></h1>
+    <p class="mb-0 faded">Practical tips on training, tech, and staying consistent.</p>
+  </div>
+</section>
+{% endblock %}
 
   <!-- Main -->
   <main class="flex-shrink-0 main-bg py-4">
@@ -75,7 +76,11 @@
 
   <!-- Footer -->
   <footer class="footer mt-auto py-3 dark-bg">
-    <p class="m-0 text-center text-white">RT Coach app</p>
+    <p class="m-0 text-center text-white">
+    {% block copyright %}
+       Copyright RT Coach 
+    {% endblock copyright %}
+    </p>
     <p class="m-0 text-center text-white">
       Follow us:
       <a class="ms-2" href="#" aria-label="Facebook"><i class="fab fa-facebook-square"></i></a>

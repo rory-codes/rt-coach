@@ -13,14 +13,15 @@
               <div class="image-flash">
                 <p class="author">User: {{ post.author }}</p>
               </div>
-              {# <img class="scale" src="{{ post.thumbnail.url }}" alt=""> #}
             </div>
 
             <div class="card-body">
               <a href="#" class="post-link">
                 <h2 class="card-title h5 m-0">{{ post.title }}</h2>
+                 <p class="card-text">{{ post.excerpt }}</p>
               </a>
               <hr />
+              <p class="author">User: {{ post.author }}</p>
               <p class="card-text text-muted h6 mb-0">
                 <time datetime="{{ post.created_on|date:'c' }}">{{ post.created_on }}</time>
               </p>
