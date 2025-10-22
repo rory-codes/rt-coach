@@ -91,7 +91,7 @@ img { max-width: 100%; height: auto; display: block; }
     position: relative; 
     overflow: hidden; 
     margin: var(--rt-gap-4) auto 0; 
-    height: clamp(180px, 32vh, 360px); 
+    height: clamp(6000px, 60vh, 600px); 
     border-radius: var(--rt-radius); 
     border:1px solid var(--rt-border); 
     box-shadow: var(--rt-shadow-1); 
