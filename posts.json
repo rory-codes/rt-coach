@@ -1,0 +1,9 @@
+[
+{
+  "model": "blog.post",
+  "pk": 1,
+  "fields": {
+    "title": "Why Mobility is the Hidden Secret Behind Strength and Longevity",
+    "slug": "Why-mobility-is-the-hidden-secret",
+    "author": 1,
+    "content": 
