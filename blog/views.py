@@ -9,6 +9,7 @@ class PostList(ListView):
     queryset = Post.objects.filter(status=1)
     template_name = "blog/index.html"
     paginate_by = 6
+    context_object_name = "post_list"
 
 def post_detail(request, slug):
     """
