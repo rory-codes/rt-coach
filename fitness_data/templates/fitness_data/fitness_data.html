@@ -107,6 +107,53 @@
                         </tbody>
                     </table>
                 </div>
+                <!-- 10RM results table -->
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <h5 class="card-title mb-0">Phase Targets (per exercise)</h5>
+                                    <div class="d-flex gap-2">
+                                        <label class="me-2">Increment:
+                                            <select class="form-select form-select-sm d-inline w-auto"
+                                                id="incrementSelect">
+                                                <option value="2.5" selected>2.5 kg</option>
+                                                <option value="1">1 kg</option>
+                                                <option value="5">5 kg</option>
+                                            </select>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="table-responsive">
+                                    <table class="table table-sm align-middle mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Exercise</th>
+                                                <th class="text-end">10RM (kg)</th>
+                                                <th class="text-end">Est. 1RM (kg)</th>
+                                                <th class="text-end">Base/Endurance</th>
+                                                <th class="text-end">Hypertrophy</th>
+                                                <th class="text-end">Strength</th>
+                                                <th class="text-end">Power</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tenrmTableBody">
+                                            <tr>
+                                                <td colspan="7" class="text-muted">Enter any 10RM above and click
+                                                    Calculate.</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
             </div>
         </div>
     </div>
@@ -273,8 +320,22 @@
                 tr.innerHTML = `<td>${z.name}</td><td>${pct}</td><td class="text-end">${z.lowBpm}–${z.highBpm} bpm</td>`;
                 tbody.appendChild(tr);
             });
+
+            function estimate1RMfrom10RM(tenrm) {
+                // Epley: 1RM ≈ w * (1 + reps/30) with reps=10 → 1 + 10/30 = 1.3333…
+                if (!Number.isFinite(tenrm) || tenrm <= 0) return null;
+                return tenrm * (1 + 10 / 30);
+            }
+
+            function readTenRmEntries() {
+                return EXERCISES.map((name, idx) => {
+                    const el = document.getElementById(`tenrm_${idx}`);
+                    const val = el ? parseFloat(el.value) : NaN;
+                    return { name, tenrm: Number.isFinite(val) ? val : null };
+                });
+            }
         }
-        
+
         function renderAll() {
             renderBMI();
             renderWHR();
