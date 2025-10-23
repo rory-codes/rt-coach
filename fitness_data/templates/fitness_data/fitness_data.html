@@ -209,6 +209,7 @@
     (function () {
         const $ = (id) => document.getElementById(id);
 
+        /* =================== HR ZONES (existing) =================== */
         const ZONES = [
             { name: "Zone 1", low: 0.50, high: 0.60 },
             { name: "Zone 2", low: 0.60, high: 0.70 },
@@ -217,11 +218,100 @@
             { name: "Zone 5", low: 0.90, high: 1.00 }
         ];
 
-        // === 10RM SECTION ===
+        function toNum(v) { const n = parseFloat(v); return Number.isFinite(n) ? n : null; }
+        function clamp(n, min, max) { if (!Number.isFinite(n)) return null; return Math.min(Math.max(n, min), max); }
+
+        function calcBMI(weightKg, heightCm) {
+            weightKg = clamp(weightKg, 0, 500);
+            heightCm = clamp(heightCm, 30, 300);
+            if (!Number.isFinite(weightKg) || !Number.isFinite(heightCm)) return null;
+            const hM = heightCm / 100;
+            if (hM <= 0) return null;
+            return weightKg / (hM * hM);
+        }
+        function bmiCategory(bmi) {
+            if (bmi == null) return "";
+            if (bmi < 18.5) return "Underweight";
+            if (bmi < 25) return "Normal";
+            if (bmi < 30) return "Overweight";
+            return "Obese";
+        }
+        function calcWHR(waistCm, hipCm) {
+            waistCm = clamp(waistCm, 20, 300);
+            hipCm = clamp(hipCm, 20, 300);
+            if (!Number.isFinite(waistCm) || !Number.isFinite(hipCm) || hipCm <= 0) return null;
+            return waistCm / hipCm;
+        }
+        function calcMaxHR(age) { age = clamp(age, 1, 120); if (!Number.isFinite(age)) return null; return 220 - age; }
+        function calcZones(age, rhr) {
+            age = clamp(age, 1, 120);
+            rhr = clamp(rhr, 20, 150);
+            const max = calcMaxHR(age);
+            if (!Number.isFinite(max) || !Number.isFinite(rhr) || rhr >= max) return { max: max ?? null, hrr: null, zones: [] };
+            const hrr = max - rhr;
+            const zones = ZONES.map(z => {
+                const low = Math.round(rhr + hrr * z.low);
+                const high = Math.round(rhr + hrr * z.high);
+                return { ...z, lowBpm: low, highBpm: high };
+            });
+            return { max, hrr, zones };
+        }
+        function renderBMI() {
+            const weight = toNum($("weightKg").value);
+            const height = toNum($("heightCm").value);
+            const bmi = calcBMI(weight, height);
+            $("bmiValue").textContent = bmi ? bmi.toFixed(1) : "—";
+            $("bmiNote").textContent = bmi ? `(${bmiCategory(bmi)})` : "";
+        }
+        function renderWHR() {
+            const waist = toNum($("waistCm").value);
+            const hip = toNum($("hipCm").value);
+            const whr = calcWHR(waist, hip);
+            $("whrValue").textContent = whr ? whr.toFixed(2) : "—";
+        }
+        function renderHRZones() {
+            const age = toNum($("age").value);
+            const rhr = toNum($("rhr").value);
+            const { max, hrr, zones } = calcZones(age, rhr);
+            $("maxHr").textContent = Number.isFinite(max) ? Math.round(max) : "—";
+            $("hrr").textContent = Number.isFinite(hrr) ? Math.round(hrr) : "—";
+            const tbody = $("zonesBody");
+            tbody.innerHTML = "";
+            if (!zones.length) {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `<td colspan="3" class="text-muted">Enter valid age and resting heart rate (RHR &lt; Max HR) to see zones.</td>`;
+                tbody.appendChild(tr); return;
+            }
+            zones.forEach(z => {
+                const tr = document.createElement("tr");
+                const pct = `${Math.round(z.low * 100)}–${Math.round(z.high * 100)}%`;
+                tr.innerHTML = `<td>${z.name}</td><td>${pct}</td><td class="text-end">${z.lowBpm}–${z.highBpm} bpm</td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        /* =================== 10RM SECTION (fixed) =================== */
         const EXERCISES = [
             "Chest Press", "Shoulder Press", "Lat Pull Down", "Seated Row",
             "Leg Press", "Deadlift", "Squat", "Upright Row", "Bicep Curl", "Tricep Pushdown"
         ];
+        const PHASES = {
+            endurance: 0.60,  // Base/Endurance
+            hypertrophy: 0.72,
+            strength: 0.85,
+            power: 0.65
+        };
+
+        function kgToLb(kg) { return kg * 2.2046226218; }
+        function lbToKg(lb) { return lb / 2.2046226218; }
+        function roundToIncrement(value, inc) {
+            if (!Number.isFinite(value) || !Number.isFinite(inc) || inc <= 0) return null;
+            return Math.round(value / inc) * inc;
+        }
+        function fmt(value, units) {
+            if (!Number.isFinite(value)) return "—";
+            return (units === "lb" ? kgToLb(value) : value).toFixed(1);
+        }
 
         function renderTenRmInputs() {
             const wrap = document.getElementById("tenRmInputs");
@@ -232,207 +322,135 @@
                 const col = document.createElement("div");
                 col.className = "col-sm-6 col-md-4 col-lg-3";
                 col.innerHTML = `
-      <label class="form-label">${name} (10RM, kg)</label>
-      <input type="number" min="0" step="0.5" class="form-control tenrm-input" id="${id}" placeholder="e.g. 40">
-      <div class="form-text">Optional: leave blank to skip.</div>
-    `;
+        <div class="form-check form-switch mb-1">
+          <input class="form-check-input include-switch" type="checkbox" id="inc_${id}" checked>
+          <label class="form-check-label small" for="inc_${id}">Include</label>
+        </div>
+        <label class="form-label">${name} (10RM, kg)</label>
+        <input type="number" min="0" step="0.5" class="form-control tenrm-input" id="${id}" placeholder="e.g. 40">
+        <div class="form-text">Optional: leave blank to skip.</div>
+      `;
                 wrap.appendChild(col);
             });
         }
 
-
-        function toNum(v) {
-            const n = parseFloat(v);
-            return Number.isFinite(n) ? n : null;
+        function estimate1RMfrom10RM(tenrm) {
+            // Epley: 1RM ≈ w * (1 + reps/30) with reps=10 → 1 + 10/30 = 1.3333…
+            if (!Number.isFinite(tenrm) || tenrm <= 0) return null;
+            return tenrm * (1 + 10 / 30);
         }
 
-        function clamp(n, min, max) {
-            if (!Number.isFinite(n)) return null;
-            return Math.min(Math.max(n, min), max);
-        }
-
-        function calcBMI(weightKg, heightCm) {
-            weightKg = clamp(weightKg, 0, 500);
-            heightCm = clamp(heightCm, 30, 300);
-            if (!Number.isFinite(weightKg) || !Number.isFinite(heightCm)) return null;
-            const hM = heightCm / 100;
-            if (hM <= 0) return null;
-            return weightKg / (hM * hM);
-        }
-
-        function bmiCategory(bmi) {
-            if (bmi == null) return "";
-            if (bmi < 18.5) return "Underweight";
-            if (bmi < 25) return "Normal";
-            if (bmi < 30) return "Overweight";
-            return "Obese";
-        }
-
-        function calcWHR(waistCm, hipCm) {
-            waistCm = clamp(waistCm, 20, 300);
-            hipCm = clamp(hipCm, 20, 300);
-            if (!Number.isFinite(waistCm) || !Number.isFinite(hipCm) || hipCm <= 0) return null;
-            return waistCm / hipCm;
-        }
-
-        function calcMaxHR(age) {
-            age = clamp(age, 1, 120);
-            if (!Number.isFinite(age)) return null;
-            return 220 - age;
-        }
-
-        function calcZones(age, rhr) {
-            age = clamp(age, 1, 120);
-            rhr = clamp(rhr, 20, 150);
-            const max = calcMaxHR(age);
-            if (!Number.isFinite(max) || !Number.isFinite(rhr) || rhr >= max) {
-                return { max: max ?? null, hrr: null, zones: [] };
-            }
-            const hrr = max - rhr;
-            const zones = ZONES.map(z => {
-                const low = Math.round(rhr + hrr * z.low);
-                const high = Math.round(rhr + hrr * z.high);
-                return { ...z, lowBpm: low, highBpm: high };
+        function readTenRmEntries() {
+            return EXERCISES.map((name, idx) => {
+                const input = document.getElementById(`tenrm_${idx}`);
+                const include = document.getElementById(`inc_tenrm_${idx}`) || document.getElementById(`inc_tenrm_${idx}`); // fallback
+                const sw = document.getElementById(`inc_tenrm_${idx}`) || document.getElementById(`inc_tenrm_${idx}`);
+                const chk = document.getElementById(`inc_tenrm_${idx}`) || document.getElementById(`inc_tenrm_${idx}`);
+                const val = input ? parseFloat(input.value) : NaN;
+                const incSwitch = document.getElementById(`inc_tenrm_${idx}`) || document.getElementById(`inc_tenrm_${idx}`);
+                const includeChecked = (document.getElementById(`inc_tenrm_${idx}`) || document.getElementById(`inc_tenrm_${idx}`));
+                const incEl = document.getElementById(`inc_tenrm_${idx}`) || document.getElementById(`inc_${`tenrm_${idx}`}`);
+                const includeFlag = (document.getElementById(`inc_${`tenrm_${idx}`}`)?.checked) ?? true;
+                return { name, tenrm: Number.isFinite(val) ? val : null, include: includeFlag };
             });
-            return { max, hrr, zones };
         }
 
-        function renderBMI() {
-            const weight = toNum($("weightKg").value);
-            const height = toNum($("heightCm").value);
-            const bmi = calcBMI(weight, height);
-            $("bmiValue").textContent = bmi ? bmi.toFixed(1) : "—";
-            $("bmiNote").textContent = bmi ? `(${bmiCategory(bmi)})` : "";
+        function computePhaseWeights(oneRm, incKg, units = "kg") {
+            if (!Number.isFinite(oneRm)) return { endurance: null, hypertrophy: null, strength: null, power: null };
+            const incDisplay = units === "lb" ? kgToLb(incKg) : incKg;
+            const roundDisp = (kg) => {
+                const dispVal = units === "lb" ? kgToLb(kg) : kg;
+                const roundedDisp = roundToIncrement(dispVal, incDisplay);
+                return units === "lb" ? lbToKg(roundedDisp) : roundedDisp;
+            };
+            return {
+                endurance: roundDisp(oneRm * PHASES.endurance),
+                hypertrophy: roundDisp(oneRm * PHASES.hypertrophy),
+                strength: roundDisp(oneRm * PHASES.strength),
+                power: roundDisp(oneRm * PHASES.power)
+            };
         }
 
-        function renderWHR() {
-            const waist = toNum($("waistCm").value);
-            const hip = toNum($("hipCm").value);
-            const whr = calcWHR(waist, hip);
-            $("whrValue").textContent = whr ? whr.toFixed(2) : "—";
+        function updateTenRmHeaderUnits(units) {
+            // reflect selected units in table headers
+            const heads = document.querySelectorAll("thead tr th");
+            if (heads && heads.length >= 3) {
+                heads[1].innerHTML = `10RM (${units})`;
+                heads[2].innerHTML = `Est. 1RM (${units})`;
+            }
         }
 
-        function renderHRZones() {
-            const age = toNum($("age").value);
-            const rhr = toNum($("rhr").value);
-            const { max, hrr, zones } = calcZones(age, rhr);
+        function renderTenRmTable() {
+            const rows = readTenRmEntries();
+            const inc = parseFloat(document.getElementById("incrementSelect").value) || 2.5;
+            const units = (document.getElementById("unitsSelect")?.value) || "kg";
+            updateTenRmHeaderUnits(units);
 
-            $("maxHr").textContent = Number.isFinite(max) ? Math.round(max) : "—";
-            $("hrr").textContent = Number.isFinite(hrr) ? Math.round(hrr) : "—";
-
-            const tbody = $("zonesBody");
+            const tbody = document.getElementById("tenrmTableBody");
             tbody.innerHTML = "";
-            if (!zones.length) {
+            let any = false;
+
+            rows.forEach(({ name, tenrm, include }) => {
+                if (!include || !Number.isFinite(tenrm) || tenrm <= 0) return;
+                any = true;
+                const oneRm = estimate1RMfrom10RM(tenrm);
+                const t = computePhaseWeights(oneRm, inc, units);
                 const tr = document.createElement("tr");
-                tr.innerHTML = `<td colspan="3" class="text-muted">Enter valid age and resting heart rate (RHR &lt; Max HR) to see zones.</td>`;
-                tbody.appendChild(tr);
-                return;
-            }
-            zones.forEach(z => {
-                const tr = document.createElement("tr");
-                const pct = `${Math.round(z.low * 100)}–${Math.round(z.high * 100)}%`;
-                tr.innerHTML = `<td>${z.name}</td><td>${pct}</td><td class="text-end">${z.lowBpm}–${z.highBpm} bpm</td>`;
+                tr.innerHTML = `
+        <td>${name}</td>
+        <td class="text-end">${fmt(tenrm, units)}</td>
+        <td class="text-end">${fmt(oneRm, units)}</td>
+        <td class="text-end">${fmt(t.endurance, units)}</td>
+        <td class="text-end">${fmt(t.hypertrophy, units)}</td>
+        <td class="text-end">${fmt(t.strength, units)}</td>
+        <td class="text-end">${fmt(t.power, units)}</td>
+      `;
                 tbody.appendChild(tr);
             });
 
-            function estimate1RMfrom10RM(tenrm) {
-                // Epley: 1RM ≈ w * (1 + reps/30) with reps=10 → 1 + 10/30 = 1.3333…
-                if (!Number.isFinite(tenrm) || tenrm <= 0) return null;
-                return tenrm * (1 + 10 / 30);
-            }
-
-            function readTenRmEntries() {
-                return EXERCISES.map((name, idx) => {
-                    const el = document.getElementById(`tenrm_${idx}`);
-                    const val = el ? parseFloat(el.value) : NaN;
-                    return { name, tenrm: Number.isFinite(val) ? val : null };
-                });
-                const PHASES = {
-                    // % of 1RM (typical working set intensity mid-points)
-                    endurance: 0.60,    // Base/Endurance ~50–60% → use 60%
-                    hypertrophy: 0.72,  // Hypertrophy ~67–75% → use 72%
-                    strength: 0.85,     // Strength ~80–90% → use 85%
-                    power: 0.65         // Power 60–70% (lighter, speed focus) → use 65%
-                };
-
-                function roundToIncrement(value, inc) {
-                    if (!Number.isFinite(value) || !Number.isFinite(inc) || inc <= 0) return null;
-                    return Math.round(value / inc) * inc;
-                }
-                function computePhaseWeights(oneRm, inc) {
-                    if (!Number.isFinite(oneRm)) return { endurance: null, hypertrophy: null, strength: null, power: null };
-                    return {
-                        endurance: roundToIncrement(oneRm * PHASES.endurance, inc),
-                        hypertrophy: roundToIncrement(oneRm * PHASES.hypertrophy, inc),
-                        strength: roundToIncrement(oneRm * PHASES.strength, inc),
-                        power: roundToIncrement(oneRm * PHASES.power, inc)
-                    };
-                }
-
-                function renderTenRmTable() {
-                    const rows = readTenRmEntries();
-                    const inc = parseFloat(document.getElementById("incrementSelect").value) || 2.5;
-                    const tbody = document.getElementById("tenrmTableBody");
-                    tbody.innerHTML = "";
-
-                    let any = false;
-                    rows.forEach(({ name, tenrm }) => {
-                        if (!Number.isFinite(tenrm) || tenrm <= 0) return;
-                        any = true;
-                        const oneRm = estimate1RMfrom10RM(tenrm);
-                        const t = computePhaseWeights(oneRm, inc);
-                        const tr = document.createElement("tr");
-                        tr.innerHTML = `
-      <td>${name}</td>
-      <td class="text-end">${tenrm.toFixed(1)}</td>
-      <td class="text-end">${oneRm.toFixed(1)}</td>
-      <td class="text-end">${t.endurance?.toFixed(1) ?? "—"}</td>
-      <td class="text-end">${t.hypertrophy?.toFixed(1) ?? "—"}</td>
-      <td class="text-end">${t.strength?.toFixed(1) ?? "—"}</td>
-      <td class="text-end">${t.power?.toFixed(1) ?? "—"}</td>
-    `;
-                        tbody.appendChild(tr);
-                    });
-
-                    if (!any) {
-                        const tr = document.createElement("tr");
-                        tr.innerHTML = `<td colspan="7" class="text-muted">Enter any 10RM above and click Calculate.</td>`;
-                        tbody.appendChild(tr);
-                    }
-                }
-
-                // hook up buttons
-                const calc10 = document.getElementById("calc10rmBtn");
-                if (calc10) calc10.addEventListener("click", renderTenRmTable);
-
-                const clear10 = document.getElementById("clear10rmBtn");
-                if (clear10) clear10.addEventListener("click", () => {
-                    document.querySelectorAll(".tenrm-input").forEach(el => el.value = "");
-                    renderTenRmTable();
-                });
-
-                const incSel = document.getElementById("incrementSelect");
-                if (incSel) incSel.addEventListener("change", renderTenRmTable);
+            if (!any) {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `<td colspan="7" class="text-muted">Enter any 10RM above and click Calculate.</td>`;
+                tbody.appendChild(tr);
             }
         }
 
-        function renderAll() {
+        /* ============== INIT + EVENT BINDINGS ============== */
+
+        // Render static 10RM inputs once, then bind their events
+        renderTenRmInputs();
+
+        // Bindten RM live updates
+        function bindTenRmEvents() {
+            document.querySelectorAll(".tenrm-input, .include-switch").forEach(el => {
+                el.addEventListener("input", renderTenRmTable);
+            });
+            $("calc10rmBtn")?.addEventListener("click", renderTenRmTable);
+            $("clear10rmBtn")?.addEventListener("click", () => {
+                document.querySelectorAll(".tenrm-input").forEach(el => el.value = "");
+                document.querySelectorAll(".include-switch").forEach(el => el.checked = true);
+                renderTenRmTable();
+            });
+            $("incrementSelect")?.addEventListener("change", renderTenRmTable);
+            $("unitsSelect")?.addEventListener("change", renderTenRmTable);
+        }
+        bindTenRmEvents();
+
+        // Initial render of both sections
+        function renderAllMetrics() {
             renderBMI();
             renderWHR();
             renderHRZones();
-            renderTenRmInputs();
-            renderTenRmTable();
         }
-
-        $("calcBtn").addEventListener("click", renderAll);
-        ["weightKg", "heightCm", "waistCm", "hipCm", "age", "rhr"].forEach(id => $(id).addEventListener("input", renderAll));
-
+        $("calcBtn").addEventListener("click", renderAllMetrics);
+        ["weightKg", "heightCm", "waistCm", "hipCm", "age", "rhr"].forEach(id => $(id).addEventListener("input", renderAllMetrics));
         $("clearBtn").addEventListener("click", () => {
             ["weightKg", "heightCm", "waistCm", "hipCm", "age", "rhr"].forEach(id => $(id).value = "");
-            renderAll();
+            renderAllMetrics();
         });
 
-        renderAll();
+        renderAllMetrics();
+        renderTenRmTable();
     })();
 </script>
 {% endblock content %}
