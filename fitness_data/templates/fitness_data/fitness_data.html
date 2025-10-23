@@ -123,7 +123,21 @@
                                                 <option value="5">5 kg</option>
                                             </select>
                                         </label>
+                                        <label class="ms-3">Units:
+                                            <select class="form-select form-select-sm d-inline w-auto" id="unitsSelect">
+                                                <option value="kg" selected>kg</option>
+                                                <option value="lb">lb</option>
+                                            </select>
+                                        </label>
+
                                     </div>
+                                </div>
+
+                                <div class="small text-muted mb-2">
+                                    <span class="badge bg-light text-dark border">Endurance ~60%</span>
+                                    <span class="badge bg-light text-dark border">Hypertrophy ~72%</span>
+                                    <span class="badge bg-light text-dark border">Strength ~85%</span>
+                                    <span class="badge bg-light text-dark border">Power ~65%</span>
                                 </div>
 
                                 <div class="table-responsive">
@@ -407,6 +421,7 @@
             renderWHR();
             renderHRZones();
             renderTenRmInputs();
+            renderTenRmTable();
         }
 
         $("calcBtn").addEventListener("click", renderAll);
