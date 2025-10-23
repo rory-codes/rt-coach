@@ -137,6 +137,11 @@
     return "Obese";
   }
 
+  function calcWHR(waistCm, hipCm) {
+    if (!waistCm || !hipCm || hipCm <= 0) return null;
+    return waistCm / hipCm;
+  }
+
   function renderBMI() {
     const weight = toNum($("weightKg").value);
     const height = toNum($("heightCm").value);
@@ -145,12 +150,20 @@
     $("bmiNote").textContent = bmi ? `(${bmiCategory(bmi)})` : "";
   }
 
+  function renderWHR() {
+    const waist = toNum($("waistCm").value);
+    const hip = toNum($("hipCm").value);
+    const whr = calcWHR(waist, hip);
+    $("whrValue").textContent = whr ? whr.toFixed(2) : "—";
+  }
+
   function renderAll() {
     renderBMI();
+    renderWHR();
   }
 
   $("calcBtn").addEventListener("click", renderAll);
-  ["weightKg","heightCm"].forEach(id => $(id).addEventListener("input", renderAll));
+  ["weightKg","heightCm","waistCm","hipCm"].forEach(id => $(id).addEventListener("input", renderAll));
 
   $("clearBtn").addEventListener("click", () => {
     ["weightKg","heightCm","waistCm","hipCm","age","rhr"].forEach(id => $(id).value = "");
@@ -160,4 +173,5 @@
   renderAll();
 })();
 </script>
+
 {% endblock content %}
