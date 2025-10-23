@@ -112,4 +112,52 @@
         </div>
     </div>
 </div>
+
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+
+  function toNum(v) {
+    const n = parseFloat(v);
+    return Number.isFinite(n) ? n : null;
+  }
+
+  function calcBMI(weightKg, heightCm) {
+    if (!weightKg || !heightCm) return null;
+    const hM = heightCm / 100;
+    if (hM <= 0) return null;
+    return weightKg / (hM * hM);
+  }
+
+  function bmiCategory(bmi) {
+    if (bmi == null) return "";
+    if (bmi < 18.5) return "Underweight";
+    if (bmi < 25) return "Normal";
+    if (bmi < 30) return "Overweight";
+    return "Obese";
+  }
+
+  function renderBMI() {
+    const weight = toNum($("weightKg").value);
+    const height = toNum($("heightCm").value);
+    const bmi = calcBMI(weight, height);
+    $("bmiValue").textContent = bmi ? bmi.toFixed(1) : "—";
+    $("bmiNote").textContent = bmi ? `(${bmiCategory(bmi)})` : "";
+  }
+
+  function renderAll() {
+    renderBMI();
+  }
+
+  $("calcBtn").addEventListener("click", renderAll);
+  ["weightKg","heightCm"].forEach(id => $(id).addEventListener("input", renderAll));
+
+  $("clearBtn").addEventListener("click", () => {
+    ["weightKg","heightCm","waistCm","hipCm","age","rhr"].forEach(id => $(id).value = "");
+    renderAll();
+  });
+
+  renderAll();
+})();
+</script>
 {% endblock content %}
