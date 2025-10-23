@@ -113,6 +113,14 @@
     (function () {
         const $ = (id) => document.getElementById(id);
 
+        const ZONES = [
+            { name: "Zone 1", low: 0.50, high: 0.60 },
+            { name: "Zone 2", low: 0.60, high: 0.70 },
+            { name: "Zone 3", low: 0.70, high: 0.80 },
+            { name: "Zone 4", low: 0.80, high: 0.90 },
+            { name: "Zone 5", low: 0.90, high: 1.00 }
+        ];
+
         function toNum(v) {
             const n = parseFloat(v);
             return Number.isFinite(n) ? n : null;
@@ -143,12 +151,18 @@
             return 220 - age;
         }
 
-        function calcHRR(age, rhr) {
+        function calcZones(age, rhr) {
             const max = calcMaxHR(age);
-            if (!Number.isFinite(max) || !Number.isFinite(rhr)) return { max: null, hrr: null };
+            if (!Number.isFinite(max) || !Number.isFinite(rhr) || rhr >= max) {
+                return { max: null, hrr: null, zones: [] };
+            }
             const hrr = max - rhr;
-            if (hrr <= 0) return { max, hrr: null };
-            return { max, hrr };
+            const zones = ZONES.map(z => {
+                const low = Math.round(rhr + hrr * z.low);
+                const high = Math.round(rhr + hrr * z.high);
+                return { ...z, lowBpm: low, highBpm: high };
+            });
+            return { max, hrr, zones };
         }
 
         function renderBMI() {
@@ -166,18 +180,34 @@
             $("whrValue").textContent = whr ? whr.toFixed(2) : "—";
         }
 
-        function renderHR() {
+        function renderHRZones() {
             const age = toNum($("age").value);
             const rhr = toNum($("rhr").value);
-            const { max, hrr } = calcHRR(age, rhr);
+            const { max, hrr, zones } = calcZones(age, rhr);
+
             $("maxHr").textContent = Number.isFinite(max) ? Math.round(max) : "—";
             $("hrr").textContent = Number.isFinite(hrr) ? Math.round(hrr) : "—";
+
+            const tbody = $("zonesBody");
+            tbody.innerHTML = "";
+            if (!zones.length) {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `<td colspan="3" class="text-muted">Enter age and resting heart rate to see zones.</td>`;
+                tbody.appendChild(tr);
+                return;
+            }
+            zones.forEach(z => {
+                const tr = document.createElement("tr");
+                const pct = `${Math.round(z.low * 100)}–${Math.round(z.high * 100)}%`;
+                tr.innerHTML = `<td>${z.name}</td><td>${pct}</td><td>${z.lowBpm}–${z.highBpm} bpm</td>`;
+                tbody.appendChild(tr);
+            });
         }
 
         function renderAll() {
             renderBMI();
             renderWHR();
-            renderHR();
+            renderHRZones();
         }
 
         $("calcBtn").addEventListener("click", renderAll);
