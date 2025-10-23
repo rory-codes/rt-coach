@@ -333,6 +333,72 @@
                     const val = el ? parseFloat(el.value) : NaN;
                     return { name, tenrm: Number.isFinite(val) ? val : null };
                 });
+                const PHASES = {
+                    // % of 1RM (typical working set intensity mid-points)
+                    endurance: 0.60,    // Base/Endurance ~50–60% → use 60%
+                    hypertrophy: 0.72,  // Hypertrophy ~67–75% → use 72%
+                    strength: 0.85,     // Strength ~80–90% → use 85%
+                    power: 0.65         // Power 60–70% (lighter, speed focus) → use 65%
+                };
+
+                function roundToIncrement(value, inc) {
+                    if (!Number.isFinite(value) || !Number.isFinite(inc) || inc <= 0) return null;
+                    return Math.round(value / inc) * inc;
+                }
+                function computePhaseWeights(oneRm, inc) {
+                    if (!Number.isFinite(oneRm)) return { endurance: null, hypertrophy: null, strength: null, power: null };
+                    return {
+                        endurance: roundToIncrement(oneRm * PHASES.endurance, inc),
+                        hypertrophy: roundToIncrement(oneRm * PHASES.hypertrophy, inc),
+                        strength: roundToIncrement(oneRm * PHASES.strength, inc),
+                        power: roundToIncrement(oneRm * PHASES.power, inc)
+                    };
+                }
+
+                function renderTenRmTable() {
+                    const rows = readTenRmEntries();
+                    const inc = parseFloat(document.getElementById("incrementSelect").value) || 2.5;
+                    const tbody = document.getElementById("tenrmTableBody");
+                    tbody.innerHTML = "";
+
+                    let any = false;
+                    rows.forEach(({ name, tenrm }) => {
+                        if (!Number.isFinite(tenrm) || tenrm <= 0) return;
+                        any = true;
+                        const oneRm = estimate1RMfrom10RM(tenrm);
+                        const t = computePhaseWeights(oneRm, inc);
+                        const tr = document.createElement("tr");
+                        tr.innerHTML = `
+      <td>${name}</td>
+      <td class="text-end">${tenrm.toFixed(1)}</td>
+      <td class="text-end">${oneRm.toFixed(1)}</td>
+      <td class="text-end">${t.endurance?.toFixed(1) ?? "—"}</td>
+      <td class="text-end">${t.hypertrophy?.toFixed(1) ?? "—"}</td>
+      <td class="text-end">${t.strength?.toFixed(1) ?? "—"}</td>
+      <td class="text-end">${t.power?.toFixed(1) ?? "—"}</td>
+    `;
+                        tbody.appendChild(tr);
+                    });
+
+                    if (!any) {
+                        const tr = document.createElement("tr");
+                        tr.innerHTML = `<td colspan="7" class="text-muted">Enter any 10RM above and click Calculate.</td>`;
+                        tbody.appendChild(tr);
+                    }
+                }
+
+                // hook up buttons
+                const calc10 = document.getElementById("calc10rmBtn");
+                if (calc10) calc10.addEventListener("click", renderTenRmTable);
+
+                const clear10 = document.getElementById("clear10rmBtn");
+                if (clear10) clear10.addEventListener("click", () => {
+                    document.querySelectorAll(".tenrm-input").forEach(el => el.value = "");
+                    renderTenRmTable();
+                });
+
+                const incSel = document.getElementById("incrementSelect");
+                if (incSel) incSel.addEventListener("change", renderTenRmTable);
             }
         }
 
