@@ -91,7 +91,7 @@ img { max-width: 100%; height: auto; display: block; }
     position: relative; 
     overflow: hidden; 
     margin: var(--rt-gap-4) auto 0; 
-    height: clamp(6000px, 60vh, 600px); 
+    height: clamp(280px, 17vh, 350px); 
     border-radius: var(--rt-radius); 
     border:1px solid var(--rt-border); 
     box-shadow: var(--rt-shadow-1); 
@@ -179,7 +179,7 @@ img { max-width: 100%; height: auto; display: block; }
 }
 .post-subtitle { 
     margin-left: 4%; 
-    color: var(--rt-muted); 
+    color: var(--rt-accent-50); 
 }
 
 .faded { color: #96a0ad; }

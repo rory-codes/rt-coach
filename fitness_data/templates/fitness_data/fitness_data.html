@@ -1,17 +1,24 @@
 {% extends 'base.html' %}
-{% block content %}
 {% load static %}
-<div class="container mt-5">
-    <div class="row">
-        <div class="col-4 text-center">
-            <img src="{% static 'images/nobody.jpg' %}" width="75%" />
-        </div>
-        <div class="col-8">
-            <h2 class="mb-3">{{ fitness_data.title }}</h2>
-            <div class="mb-4">{{ fitness_data.content | safe }}</div>
-        </div>
-    </div>
 
+{# Override the hero from base.html #}
+{% block hero %}
+<section class="container-fluid px-0">
+  <div class="masthead">
+    <div class="masthead-image">
+      <img class="masthead-photo" src="{% static 'img/data.jpg' %}" alt="">
+    </div>
+    <div class="masthead-text">
+      <h1 class="post-title">Fitness Data</h1>
+      <p class="post-subtitle">
+        Input your data to find out more about heart rate zones, waist-hip ratio and BMI
+      </p>
+    </div>
+  </div>
+</section>
+{% endblock hero %}
+
+{% block content %}
     <!-- Personal Metrics -->
     <div class="row mt-2">
         <div class="col-12">

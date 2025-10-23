@@ -1,6 +1,6 @@
 {% load static %}
 {% url 'blog:home' as home_url %}
-{% url 'fitness_data' as fitness_data_url %}
+{% url 'fitness_data:fitness_page' as fitness_url %}
 
 <!DOCTYPE html>
 <html class="h-100" lang="en">
@@ -49,7 +49,7 @@
           </li>
           <li class="nav-item">
             <a class="nav-link {% if request.path == fitness_data_url %}active{% endif %}"
-               aria-current="page" href="{{ fitness_data_url }}">Fitness data</a>
+               aria-current="page" href="{{ fitness_url }}">Fitness data</a>
           </li>
         </ul>
         <span class="navbar-text text-muted">
