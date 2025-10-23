@@ -18,37 +18,41 @@
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title mb-3">Personal Metrics</h4>
-                    <form onsubmit="return false;">
+                    <form onsubmit="return false;" novalidate>
                         <div class="row g-3">
                             <div class="col-md-3">
                                 <label for="weightKg" class="form-label">Weight (kg)</label>
-                                <input type="number" step="0.1" min="0" class="form-control" id="weightKg"
-                                    placeholder="e.g. 72.5">
+                                <input type="number" step="0.1" min="0" max="500" class="form-control" id="weightKg"
+                                    placeholder="72.5" aria-describedby="bmiHelp">
+                                <div id="bmiHelp" class="form-text">Used with height to compute BMI.</div>
                             </div>
                             <div class="col-md-3">
                                 <label for="heightCm" class="form-label">Height (cm)</label>
-                                <input type="number" step="0.1" min="0" class="form-control" id="heightCm"
-                                    placeholder="e.g. 175">
+                                <input type="number" step="0.1" min="30" max="300" class="form-control" id="heightCm"
+                                    placeholder="175">
                             </div>
 
                             <div class="col-md-3">
                                 <label for="waistCm" class="form-label">Waist (cm)</label>
-                                <input type="number" step="0.1" min="0" class="form-control" id="waistCm"
-                                    placeholder="e.g. 82">
+                                <input type="number" step="0.1" min="20" max="300" class="form-control" id="waistCm"
+                                    placeholder="82" aria-describedby="whrHelp">
+                                <div id="whrHelp" class="form-text">Waist ÷ Hip gives WHR.</div>
                             </div>
                             <div class="col-md-3">
                                 <label for="hipCm" class="form-label">Hip (cm)</label>
-                                <input type="number" step="0.1" min="0" class="form-control" id="hipCm"
-                                    placeholder="e.g. 96">
+                                <input type="number" step="0.1" min="20" max="300" class="form-control" id="hipCm"
+                                    placeholder="96">
                             </div>
 
                             <div class="col-md-3">
                                 <label for="age" class="form-label">Age (years)</label>
-                                <input type="number" min="0" class="form-control" id="age" placeholder="e.g. 34">
+                                <input type="number" min="1" max="120" class="form-control" id="age" placeholder="34"
+                                    aria-describedby="hrHelp">
                             </div>
                             <div class="col-md-3">
                                 <label for="rhr" class="form-label">Resting Heart Rate (bpm)</label>
-                                <input type="number" min="0" class="form-control" id="rhr" placeholder="e.g. 60">
+                                <input type="number" min="20" max="150" class="form-control" id="rhr" placeholder="60">
+                                <div id="hrHelp" class="form-text">Zones use Karvonen (HRR) method.</div>
                             </div>
                         </div>
 
@@ -63,18 +67,18 @@
                     <div class="row g-4">
                         <div class="col-md-4">
                             <h5 class="mb-2">BMI</h5>
-                            <p class="mb-1"><strong id="bmiValue">—</strong></p>
-                            <small id="bmiNote" class="text-muted"></small>
+                            <p class="mb-1"><strong id="bmiValue" aria-live="polite">—</strong></p>
+                            <small id="bmiNote" class="text-muted" aria-live="polite"></small>
                         </div>
                         <div class="col-md-4">
                             <h5 class="mb-2">Waist-to-Hip Ratio</h5>
-                            <p class="mb-1"><strong id="whrValue">—</strong></p>
+                            <p class="mb-1"><strong id="whrValue" aria-live="polite">—</strong></p>
                             <small id="whrNote" class="text-muted">Waist ÷ Hip</small>
                         </div>
                         <div class="col-md-4">
                             <h5 class="mb-2">Max HR & HR Reserve</h5>
-                            <p class="mb-1">Max HR: <strong id="maxHr">—</strong> bpm</p>
-                            <p class="mb-1">HRR: <strong id="hrr">—</strong> bpm</p>
+                            <p class="mb-1">Max HR: <strong id="maxHr" aria-live="polite">—</strong> bpm</p>
+                            <p class="mb-1">HRR: <strong id="hrr" aria-live="polite">—</strong> bpm</p>
                             <small class="text-muted">Max HR = 220 − age; HRR = Max HR − Resting HR.</small>
                         </div>
                     </div>
@@ -88,7 +92,7 @@
                                     <th>Target Range (bpm)</th>
                                 </tr>
                             </thead>
-                            <tbody id="zonesBody">
+                            <tbody id="zonesBody" aria-live="polite">
                                 <tr>
                                     <td colspan="3" class="text-muted">Enter age and resting heart rate to see zones.
                                     </td>
@@ -126,8 +130,15 @@
             return Number.isFinite(n) ? n : null;
         }
 
+        function clamp(n, min, max) {
+            if (!Number.isFinite(n)) return null;
+            return Math.min(Math.max(n, min), max);
+        }
+
         function calcBMI(weightKg, heightCm) {
-            if (!weightKg || !heightCm) return null;
+            weightKg = clamp(weightKg, 0, 500);
+            heightCm = clamp(heightCm, 30, 300);
+            if (!Number.isFinite(weightKg) || !Number.isFinite(heightCm)) return null;
             const hM = heightCm / 100;
             if (hM <= 0) return null;
             return weightKg / (hM * hM);
@@ -142,19 +153,24 @@
         }
 
         function calcWHR(waistCm, hipCm) {
-            if (!waistCm || !hipCm || hipCm <= 0) return null;
+            waistCm = clamp(waistCm, 20, 300);
+            hipCm = clamp(hipCm, 20, 300);
+            if (!Number.isFinite(waistCm) || !Number.isFinite(hipCm) || hipCm <= 0) return null;
             return waistCm / hipCm;
         }
 
         function calcMaxHR(age) {
+            age = clamp(age, 1, 120);
             if (!Number.isFinite(age)) return null;
             return 220 - age;
         }
 
         function calcZones(age, rhr) {
+            age = clamp(age, 1, 120);
+            rhr = clamp(rhr, 20, 150);
             const max = calcMaxHR(age);
             if (!Number.isFinite(max) || !Number.isFinite(rhr) || rhr >= max) {
-                return { max: null, hrr: null, zones: [] };
+                return { max: max ?? null, hrr: null, zones: [] };
             }
             const hrr = max - rhr;
             const zones = ZONES.map(z => {
@@ -192,7 +208,7 @@
             tbody.innerHTML = "";
             if (!zones.length) {
                 const tr = document.createElement("tr");
-                tr.innerHTML = `<td colspan="3" class="text-muted">Enter age and resting heart rate to see zones.</td>`;
+                tr.innerHTML = `<td colspan="3" class="text-muted">Enter valid age and resting heart rate (RHR &lt; Max HR) to see zones.</td>`;
                 tbody.appendChild(tr);
                 return;
             }
