@@ -1,9 +1,13 @@
 {% load static %}
 {% url 'blog:home' as home_url %}
 {% url 'fitness_data:fitness_page' as fitness_url %}
+{% url 'account_login' as login_url %}
+{% url 'account_signup' as signup_url %}
+{% url 'account_logout' as logout_url %}
 
 <!DOCTYPE html>
 <html class="h-100" lang="en">
+
 <head>
   <meta charset="utf-8" />
   <title>RT Coach Blog</title>
@@ -11,18 +15,18 @@
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@600;700&display=swap"
+    rel="stylesheet">
 
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
   <!-- Bootstrap -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-        integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x"
-        crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
   <!-- Favicon-->
-   <link rel="icon" href="{% static 'img/favicon.ico' %}">
+  <link rel="icon" href="{% static 'img/favicon.ico' %}">
   <!-- Project CSS -->
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   {% block extra_head %}{% endblock %}
@@ -37,20 +41,37 @@
       </a>
 
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText"
-              aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+        aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
 
       <div class="collapse navbar-collapse" id="navbarText">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link {% if request.path == home_url %}active{% endif %}"
-               aria-current="page" href="{{ home_url }}">Home</a>
+            <a class="nav-link {% if request.path == home_url %}active{% endif %}" aria-current="page"
+              href="{{ home_url }}">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link {% if request.path == fitness_data_url %}active{% endif %}"
-               aria-current="page" href="{{ fitness_url }}">Fitness data</a>
+            <a class="nav-link {% if request.path == fitness_data_url %}active{% endif %}" aria-current="page"
+              href="{{ fitness_url }}">Fitness data</a>
           </li>
+
+          {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link {% if request.path == logout_url %}active{% endif %}" aria-current="page"
+              href="{% url 'account_logout' %}">Logout</a>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link {% if request.path == signup_url %}active{% endif %}" aria-current="page"
+              href="{% url 'account_signup' %}">Register</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.path == login_url %}active{% endif %}" aria-current="page"
+              href="{% url 'account_login' %}">Login</a>
+          </li>
+          {% endif %}
+
         </ul>
         <span class="navbar-text text-muted">
           On a mission to help people meet their fitness goals!
@@ -60,19 +81,19 @@
   </nav>
 
   <!-- Hero -->
-{% block hero %}
-<section class="container-fluid px-0">
-  <div class="masthead light-bg">
-    <div class="masthead-image">
-      <img class="masthead-photo" src="{% static 'img/rt-coach-hero.png' %}" alt="Athlete training with RT Coach" />
+  {% block hero %}
+  <section class="container-fluid px-0">
+    <div class="masthead light-bg">
+      <div class="masthead-image">
+        <img class="masthead-photo" src="{% static 'img/rt-coach-hero.png' %}" alt="Athlete training with RT Coach" />
+      </div>
+      <div class="masthead-text">
+        <h1 class="h3 m-0">Welcome to <span class="red-o">RT Coach</span></h1>
+        <p class="mb-0 faded">Blog about training, fitness and health</p>
+      </div>
     </div>
-    <div class="masthead-text">
-      <h1 class="h3 m-0">Welcome to <span class="red-o">RT Coach</span></h1>
-      <p class="mb-0 faded">Blog about training, fitness and health</p>
-    </div>
-  </div>
-</section>
-{% endblock %}
+  </section>
+  {% endblock %}
 
   <!-- Main -->
   <main class="flex-shrink-0 main-bg py-4">
@@ -84,23 +105,25 @@
   <!-- Footer -->
   <footer class="footer mt-auto py-3 dark-bg">
     <p class="m-0 text-center text-white">
-    {% block copyright %}
-       Copyright RT Coach 
-    {% endblock copyright %}
+      {% block copyright %}
+      Copyright RT Coach
+      {% endblock copyright %}
     </p>
     <p class="m-0 text-center text-white">
       Follow us:
       <a class="ms-2" href="https://www.facebook.com/" aria-label="Facebook"><i class="fab fa-facebook-square"></i></a>
       <a class="ms-2" href="https://x.com/" aria-label="Twitter"><i class="fab fa-twitter-square"></i></a>
-      <a class="ms-2" href="https://www.instagram.com/" aria-label="Instagram"><i class="fab fa-instagram-square"></i></a>
+      <a class="ms-2" href="https://www.instagram.com/" aria-label="Instagram"><i
+          class="fab fa-instagram-square"></i></a>
       <a class="ms-2" href="https://www.youtube.com/" aria-label="YouTube"><i class="fab fa-youtube-square"></i></a>
     </p>
   </footer>
 
   <!-- Bootstrap -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
-          integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
-          crossorigin="anonymous"></script>
+    integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
+    crossorigin="anonymous"></script>
   {% block extra_js %}{% endblock %}
 </body>
+
 </html>
