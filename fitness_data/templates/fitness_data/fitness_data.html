@@ -5,7 +5,8 @@
 <section class="container-fluid px-0">
     <div class="masthead">
         <div class="masthead-image">
-            <img class="masthead-photo" src="{% static 'fitness_data/img/data.jpg' %}" alt="A picture of a wrist with a smartwatch and some data on the screen">
+            <img class="masthead-photo" src="{% static 'fitness_data/img/data.jpg' %}"
+                alt="A picture of a wrist with a smartwatch and some data on the screen">
         </div>
         <div class="masthead-text">
             <h1 class="post-title">Fitness Data</h1>
@@ -138,6 +139,16 @@
                         </div>
                     </div>
                 </div>
+
+                <form id="toWorkoutForm" method="post" action="{% url 'workout:new_plan' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="experience" value="beginner"> <!-- default; user can change -->
+                    <input type="hidden" name="goal" value="balanced"> <!-- default; user can change -->
+                    <input type="hidden" name="age" id="wf_age">
+                    <input type="hidden" name="rhr" id="wf_rhr">
+                    <input type="hidden" name="tenrm_json" id="wf_tenrm_json">
+                    <button type="button" class="btn btn-success" id="sendToWorkoutBtn">Send to Workout</button>
+                </form>
 
                 <div class="row mt-3">
                     <div class="col text-right">

@@ -241,6 +241,29 @@
         document.body.appendChild(a); a.click(); a.remove();
     });
 
+    (function(){
+    const $ = (id) => document.getElementById(id);
+    // Map exercise names to the IDs you used in your 10RM inputs
+    const EXS = ["Chest Press","Shoulder Press","Lat Pull Down","Seated Row","Leg Press","Deadlift","Squat","Upright Row","Bicep Curl","Tricep Pushdown"];
+
+    function gatherTenRM(){
+      const out = {};
+      EXS.forEach((name, idx)=>{
+        const el = document.getElementById(`tenrm_${idx}`);
+        const v = el ? parseFloat(el.value) : NaN;
+        if (Number.isFinite(v) && v > 0) out[name] = v;
+      });
+      return out;
+    }
+
+    document.getElementById("sendToWorkoutBtn")?.addEventListener("click", ()=>{
+      $("wf_age").value = (document.getElementById("age")?.value) || "";
+      $("wf_rhr").value = (document.getElementById("rhr")?.value) || "";
+      $("wf_tenrm_json").value = JSON.stringify(gatherTenRM());
+      document.getElementById("toWorkoutForm").submit();
+    });
+  })();
+
     // Personal metrics listeners
     $("calcBtn")?.addEventListener("click", renderAllMetrics);
     ["weightKg", "heightCm", "waistCm", "hipCm", "age", "rhr"].forEach(id => $(id)?.addEventListener("input", renderAllMetrics));
