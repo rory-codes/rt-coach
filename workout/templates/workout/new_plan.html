@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-7">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h3 class="h5 mb-3">Create your 12-week plan</h3>
+          <form method="post" id="workoutPrefForm">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label class="form-label">Experience</label>
+              {{ form.experience|add_class:"form-select" }}
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Goal</label>
+              {{ form.goal|add_class:"form-select" }}
+            </div>
+            {{ form.age }} {{ form.rhr }} {{ form.tenrm_json }}
+            <button type="submit" class="btn btn-primary">Generate plan</button>
+            <a href="{% url 'fitness_data:fitness_page' %}" class="btn btn-link">Go to Fitness Data</a>
+          </form>
+          <small class="text-muted d-block mt-2">Tip: from the Fitness Data page, click “Send to Workout” to auto-fill your metrics here.</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
