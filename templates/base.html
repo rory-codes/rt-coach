@@ -97,6 +97,11 @@
 
   <!-- Main -->
   <main class="flex-shrink-0 main-bg py-4">
+    {% if user.is_authenticated %}
+    <p class="text-end m-3">You are logged in as {{ user }}</p>
+    {% else %}
+    <p class="text-end m-3">You are not logged in</p>
+    {% endif %}
     <div class="container-fluid">
       {% block content %}{% endblock content %}
     </div>
