@@ -3,381 +3,218 @@
 
 {% block hero %}
 <section class="container-fluid px-0">
-  <div class="masthead">
-    <div class="masthead-image">
-      <img class="masthead-photo" src="{% static 'img/data.jpg' %}" alt="">
+    <div class="masthead">
+        <div class="masthead-image">
+            <img class="masthead-photo" src="{% static 'fitness_data/img/data.jpg' %}" alt="A picture of a wrist with a smartwatch and some data on the screen">
+        </div>
+        <div class="masthead-text">
+            <h1 class="post-title">Fitness Data</h1>
+            <p class="post-subtitle">
+                Input your data to find out more about heart rate zones, waist-hip ratio and BMI. Plus strength load
+                analysis
+            </p>
+        </div>
     </div>
-    <div class="masthead-text">
-      <h1 class="post-title">Fitness Data</h1>
-      <p class="post-subtitle">
-        Input your data to find out more about heart rate zones, waist-hip ratio and BMI. Plus strength load analysis
-      </p>
-    </div>
-  </div>
 </section>
 {% endblock hero %}
 
 {% block content %}
-
-<style>
-  /* Hero polish */
-  .masthead { position: relative; min-height: 60vh; overflow: hidden; border-radius: 12px; }
-  .masthead-image, .masthead-photo { position: absolute; inset: 0; }
-  .masthead-photo { width: 100%; height: 100%; object-fit: cover; object-position: center; }
-  .masthead::before { content: ""; position: absolute; inset: 0; background: rgba(0,0,0,.25); }
-  .masthead-text { position: relative; z-index: 1; color: #fff; padding: 3rem; }
-  @media (max-width: 576px){ .masthead{ min-height: 40vh } .masthead-text{ padding: 1.5rem } }
-
-  /* Table UX */
-  .table thead th { position: sticky; top: 0; z-index: 1; }
-  #tenrmTableBody td { white-space: nowrap; }
-</style>
+<link rel="stylesheet" href="{% static 'fitness_data/css/fitness_data.css' %}" />
 
 <!-- Personal Metrics -->
 <div class="row mt-2">
-  <div class="col-12">
-    <div class="card shadow-sm">
-      <div class="card-body">
-        <h4 class="card-title mb-3">Personal Metrics</h4>
-        <form onsubmit="return false;" novalidate>
-          <div class="row g-3">
-            <div class="col-sm-6 col-md-3">
-              <label for="weightKg" class="form-label">Weight (kg)</label>
-              <input type="number" step="0.1" min="0" max="500" class="form-control" id="weightKg" placeholder="72.5" aria-describedby="bmiHelp">
-              <div id="bmiHelp" class="form-text">Used with height to compute BMI.</div>
-            </div>
-            <div class="col-sm-6 col-md-3">
-              <label for="heightCm" class="form-label">Height (cm)</label>
-              <input type="number" step="0.1" min="30" max="300" class="form-control" id="heightCm" placeholder="175">
-            </div>
-            <div class="col-sm-6 col-md-3">
-              <label for="waistCm" class="form-label">Waist (cm)</label>
-              <input type="number" step="0.1" min="20" max="300" class="form-control" id="waistCm" placeholder="82" aria-describedby="whrHelp">
-              <div id="whrHelp" class="form-text">Waist ÷ Hip gives WHR.</div>
-            </div>
-            <div class="col-sm-6 col-md-3">
-              <label for="hipCm" class="form-label">Hip (cm)</label>
-              <input type="number" step="0.1" min="20" max="300" class="form-control" id="hipCm" placeholder="96">
-            </div>
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h4 class="card-title mb-3">Personal Metrics</h4>
+                <form onsubmit="return false;" novalidate>
+                    <div class="row g-3">
+                        <div class="col-sm-6 col-md-3">
+                            <label for="weightKg" class="form-label">Weight (kg)</label>
+                            <input type="number" step="0.1" min="0" max="500" class="form-control" id="weightKg"
+                                placeholder="72.5" aria-describedby="bmiHelp">
+                            <div id="bmiHelp" class="form-text">Used with height to compute BMI.</div>
+                        </div>
+                        <div class="col-sm-6 col-md-3">
+                            <label for="heightCm" class="form-label">Height (cm)</label>
+                            <input type="number" step="0.1" min="30" max="300" class="form-control" id="heightCm"
+                                placeholder="175">
+                        </div>
+                        <div class="col-sm-6 col-md-3">
+                            <label for="waistCm" class="form-label">Waist (cm)</label>
+                            <input type="number" step="0.1" min="20" max="300" class="form-control" id="waistCm"
+                                placeholder="82" aria-describedby="whrHelp">
+                            <div id="whrHelp" class="form-text">Waist ÷ Hip gives WHR.</div>
+                        </div>
+                        <div class="col-sm-6 col-md-3">
+                            <label for="hipCm" class="form-label">Hip (cm)</label>
+                            <input type="number" step="0.1" min="20" max="300" class="form-control" id="hipCm"
+                                placeholder="96">
+                        </div>
 
-            <div class="col-sm-6 col-md-3">
-              <label for="age" class="form-label">Age (years)</label>
-              <input type="number" min="1" max="120" class="form-control" id="age" placeholder="34" aria-describedby="hrHelp">
-            </div>
-            <div class="col-sm-6 col-md-3">
-              <label for="rhr" class="form-label">Resting Heart Rate (bpm)</label>
-              <input type="number" min="20" max="150" class="form-control" id="rhr" placeholder="60">
-              <div id="hrHelp" class="form-text">Zones use Karvonen (HRR) method.</div>
-            </div>
-          </div>
+                        <div class="col-sm-6 col-md-3">
+                            <label for="age" class="form-label">Age (years)</label>
+                            <input type="number" min="1" max="120" class="form-control" id="age" placeholder="34"
+                                aria-describedby="hrHelp">
+                        </div>
+                        <div class="col-sm-6 col-md-3">
+                            <label for="rhr" class="form-label">Resting Heart Rate (bpm)</label>
+                            <input type="number" min="20" max="150" class="form-control" id="rhr" placeholder="60">
+                            <div id="hrHelp" class="form-text">Zones use Karvonen (HRR) method.</div>
+                        </div>
+                    </div>
 
-          <div class="mt-3">
-            <button type="button" class="btn btn-primary" id="calcBtn">Calculate</button>
-            <button type="button" class="btn btn-outline-secondary ms-2" id="clearBtn">Clear</button>
-            <button type="button" class="btn btn-outline-primary ms-2" id="downloadCsvBtn">Download CSV</button>
-          </div>
-        </form>
+                    <div class="mt-3">
+                        <button type="button" class="btn btn-primary" id="calcBtn">Calculate</button>
+                        <button type="button" class="btn btn-outline-secondary ms-2" id="clearBtn">Clear</button>
+                        <button type="button" class="btn btn-outline-primary ms-2" id="downloadCsvBtn">Download
+                            CSV</button>
+                    </div>
+                </form>
 
-        <hr class="my-4">
+                <hr class="my-4">
 
-        <div class="row g-4">
-          <div class="col-md-4">
-            <h6 class="text-uppercase text-muted mb-2">BMI</h6>
-            <p class="mb-1 fs-5"><strong id="bmiValue" aria-live="polite">—</strong></p>
-            <small id="bmiNote" class="text-muted" aria-live="polite"></small>
-          </div>
-          <div class="col-md-4">
-            <h6 class="text-uppercase text-muted mb-2">Waist-to-Hip Ratio</h6>
-            <p class="mb-1 fs-5"><strong id="whrValue" aria-live="polite">—</strong></p>
-            <small id="whrNote" class="text-muted">Waist ÷ Hip</small>
-          </div>
-          <div class="col-md-4">
-            <h6 class="text-uppercase text-muted mb-2">Max HR & HR Reserve</h6>
-            <p class="mb-1">Max HR: <strong id="maxHr" aria-live="polite">—</strong> bpm</p>
-            <p class="mb-1">HRR: <strong id="hrr" aria-live="polite">—</strong> bpm</p>
-            <small class="text-muted">Max HR = 220 − age; HRR = Max HR − Resting HR.</small>
-          </div>
-        </div>
-
-        <div class="table-responsive mt-4">
-          <table class="table table-sm align-middle mb-0">
-            <thead class="table-light">
-              <tr>
-                <th>Zone</th>
-                <th>Intensity (% HRR)</th>
-                <th class="text-end">Target Range (bpm)</th>
-              </tr>
-            </thead>
-            <tbody id="zonesBody" aria-live="polite">
-              <tr>
-                <td colspan="3" class="text-muted">Enter age and resting heart rate to see zones.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Phase Targets table -->
-        <div class="row mt-3">
-          <div class="col-12">
-            <div class="card shadow-sm">
-              <div class="card-body">
-                <div class="d-flex align-items-center justify-content-between mb-2">
-                  <h5 class="card-title mb-0">Phase Targets (per exercise)</h5>
-                  <div class="d-flex gap-2">
-                    <label class="me-2">Increment:
-                      <select class="form-select form-select-sm d-inline w-auto" id="incrementSelect">
-                        <option value="2.5" selected>2.5 kg</option>
-                        <option value="1">1 kg</option>
-                        <option value="5">5 kg</option>
-                      </select>
-                    </label>
-                    <label class="ms-3">Units:
-                      <select class="form-select form-select-sm d-inline w-auto" id="unitsSelect">
-                        <option value="kg" selected>kg</option>
-                        <option value="lb">lb</option>
-                      </select>
-                    </label>
-                  </div>
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <h6 class="text-uppercase text-muted mb-2">BMI</h6>
+                        <p class="mb-1 fs-5"><strong id="bmiValue" aria-live="polite">—</strong></p>
+                        <small id="bmiNote" class="text-muted" aria-live="polite"></small>
+                    </div>
+                    <div class="col-md-4">
+                        <h6 class="text-uppercase text-muted mb-2">Waist-to-Hip Ratio</h6>
+                        <p class="mb-1 fs-5"><strong id="whrValue" aria-live="polite">—</strong></p>
+                        <small id="whrNote" class="text-muted">Waist ÷ Hip</small>
+                    </div>
+                    <div class="col-md-4">
+                        <h6 class="text-uppercase text-muted mb-2">Max HR & HR Reserve</h6>
+                        <p class="mb-1">Max HR: <strong id="maxHr" aria-live="polite">—</strong> bpm</p>
+                        <p class="mb-1">HRR: <strong id="hrr" aria-live="polite">—</strong> bpm</p>
+                        <small class="text-muted">Max HR = 220 − age; HRR = Max HR − Resting HR.</small>
+                    </div>
                 </div>
 
-                <div class="small text-muted mb-2">
-                  <span class="badge bg-light text-dark border">Endurance ~60%</span>
-                  <span class="badge bg-light text-dark border">Hypertrophy ~72%</span>
-                  <span class="badge bg-light text-dark border">Strength ~85%</span>
-                  <span class="badge bg-light text-dark border">Power ~65%</span>
+                <div class="table-responsive mt-4">
+                    <table class="table table-sm align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Zone</th>
+                                <th>Intensity (% HRR)</th>
+                                <th class="text-end">Target Range (bpm)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="zonesBody" aria-live="polite">
+                            <tr>
+                                <td colspan="3" class="text-muted">Enter age and resting heart rate to see zones.</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
 
-                <div class="table-responsive">
-                  <table class="table table-sm align-middle mb-0" id="tenrmTable">
-                    <thead class="table-light">
-                      <tr>
-                        <th>Exercise</th>
-                        <th class="text-end">10RM (kg)</th>
-                        <th class="text-end">Est. 1RM (kg)</th>
-                        <th class="text-end">Base/Endurance</th>
-                        <th class="text-end">Hypertrophy</th>
-                        <th class="text-end">Strength</th>
-                        <th class="text-end">Power</th>
-                      </tr>
-                    </thead>
-                    <tbody id="tenrmTableBody" aria-live="polite">
-                      <tr>
-                        <td colspan="7" class="text-muted">Enter any 10RM above and click Calculate.</td>
-                      </tr>
-                    </tbody>
-                  </table>
+                <!-- 10RM inputs -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h4 class="card-title mb-3">10RM → Training Weights</h4>
+                                <p class="text-muted mb-3">
+                                    Enter your <strong>10-rep max (10RM)</strong> for each lift (kg). We’ll estimate 1RM
+                                    and target
+                                    weights by phase.
+                                </p>
+
+                                <div class="row g-3" id="tenRmInputs"><!-- populated by JS --></div>
+
+                                <div class="mt-3">
+                                    <button type="button" class="btn btn-primary" id="calc10rmBtn">Calculate
+                                        Weights</button>
+                                    <button type="button" class="btn btn-outline-secondary ms-2"
+                                        id="clear10rmBtn">Clear</button>
+                                    <button type="button" class="btn btn-outline-success ms-2" id="sample10rmBtn">Fill
+                                        Sample</button>
+                                    <button type="button" class="btn btn-outline-danger ms-2" id="reset10rmBtn">Reset
+                                        Table</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-              </div>
+                <div class="row mt-3">
+                    <div class="col text-right">
+                        {% if fitness_data %}
+                        <p class="text-end"><em>Updated on: {{ fitness_data.updated_on }}</em></p>
+                        {% else %}
+                        <p class="text-end text-muted"><em>Updated on: —</em></p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Phase Targets table -->
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <h5 class="card-title mb-0">Phase Targets (per exercise)</h5>
+                                    <div class="d-flex gap-2">
+                                        <label class="me-2">Increment:
+                                            <select class="form-select form-select-sm d-inline w-auto"
+                                                id="incrementSelect">
+                                                <option value="2.5" selected>2.5 kg</option>
+                                                <option value="1">1 kg</option>
+                                                <option value="5">5 kg</option>
+                                            </select>
+                                        </label>
+                                        <label class="ms-3">Units:
+                                            <select class="form-select form-select-sm d-inline w-auto" id="unitsSelect">
+                                                <option value="kg" selected>kg</option>
+                                                <option value="lb">lb</option>
+                                            </select>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="small text-muted mb-2">
+                                    <span class="badge bg-light text-dark border">Endurance ~60%</span>
+                                    <span class="badge bg-light text-dark border">Hypertrophy ~72%</span>
+                                    <span class="badge bg-light text-dark border">Strength ~85%</span>
+                                    <span class="badge bg-light text-dark border">Power ~65%</span>
+                                </div>
+
+                                <div class="table-responsive">
+                                    <table class="table table-sm align-middle mb-0" id="tenrmTable">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Exercise</th>
+                                                <th class="text-end">10RM (kg)</th>
+                                                <th class="text-end">Est. 1RM (kg)</th>
+                                                <th class="text-end">Base/Endurance</th>
+                                                <th class="text-end">Hypertrophy</th>
+                                                <th class="text-end">Strength</th>
+                                                <th class="text-end">Power</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tenrmTableBody" aria-live="polite">
+                                            <tr>
+                                                <td colspan="7" class="text-muted">Enter any 10RM above and click
+                                                    Calculate.</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
-          </div>
         </div>
-
-      </div>
     </div>
-  </div>
 </div>
 <!-- /Personal Metrics -->
 
-<!-- 10RM inputs -->
-<div class="row mt-4">
-  <div class="col-12">
-    <div class="card shadow-sm">
-      <div class="card-body">
-        <h4 class="card-title mb-3">10RM → Training Weights</h4>
-        <p class="text-muted mb-3">
-          Enter your <strong>10-rep max (10RM)</strong> for each lift (kg). We’ll estimate 1RM and target weights by phase.
-        </p>
 
-        <div class="row g-3" id="tenRmInputs"><!-- populated by JS --></div>
-
-        <div class="mt-3">
-          <button type="button" class="btn btn-primary" id="calc10rmBtn">Calculate Weights</button>
-          <button type="button" class="btn btn-outline-secondary ms-2" id="clear10rmBtn">Clear</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="row mt-3">
-  <div class="col text-right">
-    {% if fitness_data %}
-      <p class="text-end"><em>Updated on: {{ fitness_data.updated_on }}</em></p>
-    {% else %}
-      <p class="text-end text-muted"><em>Updated on: —</em></p>
-    {% endif %}
-  </div>
-</div>
-
-<script>
-(function () {
-  const $ = (id) => document.getElementById(id);
-
-  /* ====== HR ZONES / BMI / WHR ====== */
-  const ZONES = [
-    { name: "Zone 1", low: 0.50, high: 0.60 },
-    { name: "Zone 2", low: 0.60, high: 0.70 },
-    { name: "Zone 3", low: 0.70, high: 0.80 },
-    { name: "Zone 4", low: 0.80, high: 0.90 },
-    { name: "Zone 5", low: 0.90, high: 1.00 }
-  ];
-  function toNum(v){ const n=parseFloat(v); return Number.isFinite(n)?n:null; }
-  function clamp(n,min,max){ if(!Number.isFinite(n)) return null; return Math.min(Math.max(n,min),max); }
-  function calcBMI(w,h){ w=clamp(w,0,500); h=clamp(h,30,300); if(!Number.isFinite(w)||!Number.isFinite(h)) return null; const m=h/100; return w/(m*m); }
-  function bmiCategory(b){ if(b==null) return ""; if(b<18.5) return "Underweight"; if(b<25) return "Normal"; if(b<30) return "Overweight"; return "Obese"; }
-  function calcWHR(w,h){ w=clamp(w,20,300); h=clamp(h,20,300); if(!Number.isFinite(w)||!Number.isFinite(h)||h<=0) return null; return w/h; }
-  function calcMaxHR(a){ a=clamp(a,1,120); if(!Number.isFinite(a)) return null; return 220-a; }
-  function calcZones(a,r){ a=clamp(a,1,120); r=clamp(r,20,150); const m=calcMaxHR(a); if(!Number.isFinite(m)||!Number.isFinite(r)||r>=m) return {max:m??null,hrr:null,zones:[]}; const hrr=m-r; const zones = ZONES.map(z=>({ ...z, lowBpm:Math.round(r+hrr*z.low), highBpm:Math.round(r+hrr*z.high) })); return {max:m,hrr,zones}; }
-  function renderBMI(){ const b=calcBMI(toNum($("weightKg").value), toNum($("heightCm").value)); $("bmiValue").textContent=b?b.toFixed(1):"—"; $("bmiNote").textContent=b?`(${bmiCategory(b)})`:""; }
-  function renderWHR(){ const v=calcWHR(toNum($("waistCm").value), toNum($("hipCm").value)); $("whrValue").textContent=v?v.toFixed(2):"—"; }
-  function renderHRZones(){ const {max,hrr,zones}=calcZones(toNum($("age").value), toNum($("rhr").value)); $("maxHr").textContent=Number.isFinite(max)?Math.round(max):"—"; $("hrr").textContent=Number.isFinite(hrr)?Math.round(hrr):"—"; const tb=$("zonesBody"); tb.innerHTML=""; if(!zones.length){ tb.innerHTML=`<tr><td colspan="3" class="text-muted">Enter valid age and resting heart rate (RHR &lt; Max HR) to see zones.</td></tr>`; return; } zones.forEach(z=>{ const tr=document.createElement("tr"); tr.innerHTML=`<td>${z.name}</td><td>${Math.round(z.low*100)}–${Math.round(z.high*100)}%</td><td class="text-end">${z.lowBpm}–${z.highBpm} bpm</td>`; tb.appendChild(tr); }); }
-
-  /* ====== 10RM SECTION ====== */
-  const EXERCISES = ["Chest Press","Shoulder Press","Lat Pull Down","Seated Row","Leg Press","Deadlift","Squat","Upright Row","Bicep Curl","Tricep Pushdown"];
-  const PHASES = { endurance:0.60, hypertrophy:0.72, strength:0.85, power:0.65 };
-  function kgToLb(kg){ return kg * 2.2046226218; }
-  function lbToKg(lb){ return lb / 2.2046226218; }
-  function roundToIncrement(val, inc){ if(!Number.isFinite(val)||!Number.isFinite(inc)||inc<=0) return null; return Math.round(val/inc)*inc; }
-  function fmt(v, units){ if(!Number.isFinite(v)) return "—"; return (units==="lb" ? kgToLb(v) : v).toFixed(1); }
-
-  function renderTenRmInputs(){
-    const wrap = $("tenRmInputs"); if(!wrap) return;
-    wrap.innerHTML = "";
-    EXERCISES.forEach((name, idx)=>{
-      const id=`tenrm_${idx}`;
-      const col=document.createElement("div");
-      col.className="col-sm-6 col-md-4 col-lg-3";
-      col.innerHTML = `
-        <div class="form-check form-switch mb-1">
-          <input class="form-check-input include-switch" type="checkbox" id="inc_${id}" checked>
-          <label class="form-check-label small" for="inc_${id}">Include</label>
-        </div>
-        <label class="form-label">${name} (10RM, kg)</label>
-        <input type="number" min="0" step="0.5" class="form-control tenrm-input" id="${id}" placeholder="e.g. 40">
-        <div class="form-text">Optional: leave blank to skip.</div>`;
-      wrap.appendChild(col);
-    });
-  }
-
-  function estimate1RMfrom10RM(tenrm){ if(!Number.isFinite(tenrm)||tenrm<=0) return null; return tenrm*(1+10/30); }
-
-  function readTenRmEntries(){
-    return EXERCISES.map((name, idx)=>{
-      const v = parseFloat( ($(`tenrm_${idx}`) || {}).value );
-      const include = ($(`inc_tenrm_${idx}`) || $(`inc_${`tenrm_${idx}`}`))?.checked ?? true;
-      return { name, tenrm: Number.isFinite(v) ? v : null, include };
-    });
-  }
-
-  function computePhaseWeights(oneRm, incKg, units="kg"){
-    if(!Number.isFinite(oneRm)) return { endurance:null, hypertrophy:null, strength:null, power:null };
-    const incDisplay = units==="lb" ? kgToLb(incKg) : incKg;
-    const roundDisp = (kg) => {
-      const disp = units==="lb" ? kgToLb(kg) : kg;
-      const r = roundToIncrement(disp, incDisplay);
-      return units==="lb" ? lbToKg(r) : r;
-    };
-    return {
-      endurance: roundDisp(oneRm * PHASES.endurance),
-      hypertrophy: roundDisp(oneRm * PHASES.hypertrophy),
-      strength: roundDisp(oneRm * PHASES.strength),
-      power: roundDisp(oneRm * PHASES.power)
-    };
-  }
-
-  function updateTenRmHeaderUnits(units){
-    const ths = document.querySelectorAll("#tenrmTable thead th");
-    if(ths.length >= 3){
-      ths[1].innerHTML = `10RM (${units})`;
-      ths[2].innerHTML = `Est. 1RM (${units})`;
-    }
-  }
-
-  function renderTenRmTable(){
-    const rows = readTenRmEntries();
-    const inc = parseFloat(($("incrementSelect")||{}).value) || 2.5;
-    const units = (($("unitsSelect")||{}).value) || "kg";
-    updateTenRmHeaderUnits(units);
-
-    const tbody = $("tenrmTableBody");
-    tbody.innerHTML = "";
-    let any = false;
-
-    rows.forEach(({name, tenrm, include})=>{
-      if(!include || !Number.isFinite(tenrm) || tenrm<=0) return;
-      any = true;
-      const oneRm = estimate1RMfrom10RM(tenrm);
-      const t = computePhaseWeights(oneRm, inc, units);
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${name}</td>
-        <td class="text-end">${fmt(tenrm, units)}</td>
-        <td class="text-end">${fmt(oneRm, units)}</td>
-        <td class="text-end">${fmt(t.endurance, units)}</td>
-        <td class="text-end">${fmt(t.hypertrophy, units)}</td>
-        <td class="text-end">${fmt(t.strength, units)}</td>
-        <td class="text-end">${fmt(t.power, units)}</td>`;
-      tbody.appendChild(tr);
-    });
-
-    if(!any){
-      tbody.innerHTML = `<tr><td colspan="7" class="text-muted">Enter any 10RM above and click Calculate.</td></tr>`;
-    }
-  }
-
-  /* ====== INIT + EVENTS ====== */
-
-  // Render inputs FIRST, then bind listeners
-  renderTenRmInputs();
-
-  // Bind 10RM live updates
-  document.querySelectorAll(".tenrm-input, .include-switch").forEach(el=>{
-    el.addEventListener("input", renderTenRmTable);
-    el.addEventListener("change", renderTenRmTable);
-  });
-
-  $("calc10rmBtn")?.addEventListener("click", renderTenRmTable);
-  $("clear10rmBtn")?.addEventListener("click", ()=>{
-    document.querySelectorAll(".tenrm-input").forEach(el=>el.value="");
-    document.querySelectorAll(".include-switch").forEach(el=>el.checked=true);
-    renderTenRmTable();
-  });
-  $("incrementSelect")?.addEventListener("change", renderTenRmTable);
-  $("unitsSelect")?.addEventListener("change", renderTenRmTable);
-
-  // CSV export uses current table/units
-  function buildCsv() {
-    const inc = parseFloat(($("incrementSelect")||{}).value) || 2.5;
-    const units = (($("unitsSelect")||{}).value) || "kg";
-    const rows = readTenRmEntries().filter(r => r.include && Number.isFinite(r.tenrm) && r.tenrm>0);
-    const header = ["Exercise",`10RM (${units})`,`Est 1RM (${units})`,`Endurance (${units})`,`Hypertrophy (${units})`,`Strength (${units})`,`Power (${units})`];
-    const lines = [header.join(",")];
-    rows.forEach(({name, tenrm})=>{
-      const oneRm = estimate1RMfrom10RM(tenrm);
-      const t = computePhaseWeights(oneRm, inc, units);
-      lines.push([name, fmt(tenrm, units), fmt(oneRm, units), fmt(t.endurance, units), fmt(t.hypertrophy, units), fmt(t.strength, units), fmt(t.power, units)].join(","));
-    });
-    return lines.join("\n");
-  }
-  $("downloadCsvBtn")?.addEventListener("click", ()=>{
-    const csv = buildCsv();
-    const blob = new Blob([csv], {type:"text/csv;charset=utf-8;"});
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "training_weights.csv";
-    document.body.appendChild(a); a.click(); a.remove();
-  });
-
-  // Personal metrics bindings
-  function renderAllMetrics(){ renderBMI(); renderWHR(); renderHRZones(); }
-  $("calcBtn").addEventListener("click", renderAllMetrics);
-  ["weightKg","heightCm","waistCm","hipCm","age","rhr"].forEach(id=>$(id).addEventListener("input", renderAllMetrics));
-  $("clearBtn").addEventListener("click", ()=>{ ["weightKg","heightCm","waistCm","hipCm","age","rhr"].forEach(id=>$(id).value=""); renderAllMetrics(); });
-
-  // Initial paints
-  renderAllMetrics();
-  renderTenRmTable();
-})();
-</script>
+<!-- JS moved to static file -->
+<script src="{% static 'fitness_data/js/fitness_data.js' %}" defer></script>
 {% endblock content %}
