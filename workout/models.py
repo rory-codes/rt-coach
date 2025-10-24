@@ -13,18 +13,10 @@ class TrainingGoal(models.TextChoices):
     BALANCED = "balanced", "Improve health (balanced)"
 
 class WorkoutPlan(models.Model):
-    """Stores a generated plan (snapshot) so user can revisit it."""
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, null=True, blank=True,
-        on_delete=models.SET_NULL, related_name="workout_plans"
-    )
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
+                             on_delete=models.SET_NULL, related_name="workout_plans")
     experience = models.CharField(max_length=20, choices=ExperienceLevel.choices)
     goal = models.CharField(max_length=20, choices=TrainingGoal.choices)
-    # Raw inputs used to compute the plan (age, rhr, 10rms, weight, etc.)
     metrics_json = models.JSONField(default=dict, blank=True)
-    # The rendered, structured plan
     plan_json = models.JSONField(default=dict, blank=True)
     created_on = models.DateTimeField(default=timezone.now)
-
-    def __str__(self) -> str:
-        return f"{self.get_experience_display()} · {self.get_goal_display()} · {self.created_on:%Y-%m-%d}"

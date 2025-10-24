@@ -1,74 +1,106 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="container mt-4">
-  <div class="row">
-    <div class="col-12">
-      <div class="d-flex justify-content-between align-items-center mb-2">
-        <h3 class="h5 mb-0">12-week plan</h3>
-        <span class="text-muted">{{ wp.get_experience_display }} · {{ wp.get_goal_display }}</span>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h3 class="h5 mb-1">12-week plan</h3>
+      <div class="text-muted small">
+        {{ wp.get_experience_display }} · {{ wp.get_goal_display }}
+        · Age: {{ meta.age|default:"—" }} · RHR: {{ meta.rhr|default:"—" }}
       </div>
-      <p class="small text-muted mb-3">
-        Age: {{ wp.metrics_json.age|default:"—" }} &middot;
-        RHR: {{ wp.metrics_json.rhr|default:"—" }}
-      </p>
-
-      <div class="accordion" id="weeksAcc">
-        {% for wk in wp.plan_json.weeks %}
-        <div class="accordion-item">
-          <h2 class="accordion-header" id="w{{ wk.week }}h">
-            <button class="accordion-button {{ not forloop.first|yesno:',collapsed,' }}" type="button" data-bs-toggle="collapse" data-bs-target="#w{{ wk.week }}">
-              Week {{ wk.week }} — {{ wk.phase|title }}
-            </button>
-          </h2>
-          <div id="w{{ wk.week }}" class="accordion-collapse collapse {{ forloop.first|yesno:'show,' }}" data-bs-parent="#weeksAcc">
-            <div class="accordion-body">
-              <h6>Cardio</h6>
-              <p class="mb-1">
-                {{ wk.cardio.sessions }} sessions &times; {{ wk.cardio.minutes_per_session }} min.
-                {% if wk.cardio.target_zone %}
-                  Target: <strong>{{ wk.cardio.target_zone }}</strong>
-                  {% if wk.cardio.target_bpm %} ({{ wk.cardio.target_bpm.0 }}–{{ wk.cardio.target_bpm.1 }} bpm){% endif %}
-                {% endif %}
-              </p>
-              <hr>
-              <h6>Strength ({{ wk.strength.sessions }} sessions)</h6>
-              <div class="table-responsive">
-                <table class="table table-sm">
-                  <thead class="table-light">
-                    <tr><th>Exercise</th><th class="text-end">Load (kg)</th><th>Notes</th></tr>
-                  </thead>
-                  <tbody>
-                  {% for ex in wk.strength.exercises %}
-                    <tr>
-                      <td>{{ ex.name }}</td>
-                      <td class="text-end">{{ ex.load_kg|default:"—" }}</td>
-                      <td>{{ ex.notes }}</td>
-                    </tr>
-                  {% endfor %}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-        {% endfor %}
-      </div>
-
-      <hr class="my-4">
-      <details>
-        <summary class="small text-muted">Show HR zones used</summary>
-        <div class="table-responsive mt-2">
-          <table class="table table-sm">
-            <thead class="table-light"><tr><th>Zone</th><th class="text-end">BPM</th></tr></thead>
-            <tbody>
-              {% for z in wp.plan_json.zones %}
-              <tr><td>{{ z.name }}</td><td class="text-end">{{ z.lo_bpm }}–{{ z.hi_bpm }}</td></tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </details>
+    </div>
+    <div>
+      <a class="btn btn-sm btn-outline-primary" href="{% url 'workout:export_plan_csv' pk=wp.pk %}">
+        Download CSV
+      </a>
     </div>
   </div>
+
+  {% if weeks %}
+  <div class="accordion" id="weeksAcc">
+    {% for wk in weeks %}
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="w{{ wk.week }}h">
+        <button class="accordion-button {% if not forloop.first %}collapsed{% endif %}"
+                type="button" data-bs-toggle="collapse" data-bs-target="#w{{ wk.week }}">
+          Week {{ wk.week }} — {{ wk.phase|title }}
+        </button>
+      </h2>
+      <div id="w{{ wk.week }}" class="accordion-collapse collapse {% if forloop.first %}show{% endif %}"
+           data-bs-parent="#weeksAcc">
+        <div class="accordion-body">
+          {% for d in wk.days %}
+          <div class="mb-4">
+            <h6 class="mb-2">Day {{ d.day }}</h6>
+            <p class="mb-1"><strong>Warm-Up:</strong> {{ d.warmup|default:"—" }}</p>
+
+            <div class="table-responsive">
+              <table class="table table-sm">
+                <thead class="table-light">
+                  <tr>
+                    <th>Exercise</th>
+                    <th class="text-end">Sets×Reps</th>
+                    <th class="text-end">%1RM</th>
+                    <th class="text-end">Load (kg)</th>
+                    <th class="text-end">RPE</th>
+                    <th class="text-end">Rest</th>
+                    <th>Tempo</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for r in d.workout_rows %}
+                  <tr>
+                    <td>{{ r.name }}</td>
+                    <td class="text-end">{{ r.sets }}×{{ r.reps }}</td>
+                    <td class="text-end">{% if r.pct_1rm %}{{ r.pct_1rm|floatformat:2 }}%{% else %}—{% endif %}</td>
+                    <td class="text-end">{{ r.load_kg|default:"—" }}</td>
+                    <td class="text-end">{{ r.rpe|default:"—" }}</td>
+                    <td class="text-end">{% if r.rest_s %}{{ r.rest_s }}s{% else %}—{% endif %}</td>
+                    <td>{{ r.tempo|default:"—" }}</td>
+                  </tr>
+                  {% empty %}
+                  <tr><td colspan="7" class="text-muted">No exercises.</td></tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+
+            <p class="mb-0">
+              <strong>Cardio:</strong>
+              {% if d.cardio and d.cardio.zone %}
+                {{ d.cardio.zone }} — {{ d.cardio.minutes|default:"—" }} min
+                {% if d.cardio.bpm %} ({{ d.cardio.bpm.0 }}–{{ d.cardio.bpm.1 }} bpm){% endif %}
+              {% else %}
+                {{ d.cardio.minutes|default:"—" }} min
+              {% endif %}
+            </p>
+            <p class="mb-0"><strong>Mobility:</strong> {{ d.mobility|default:"—" }}</p>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="alert alert-warning">No weeks found in this plan.</div>
+  {% endif %}
+
+  {% if zones %}
+  <hr class="my-4">
+  <details>
+    <summary class="small text-muted">Show HR zones used</summary>
+    <div class="table-responsive mt-2">
+      <table class="table table-sm">
+        <thead class="table-light"><tr><th>Zone</th><th class="text-end">BPM</th></tr></thead>
+        <tbody>
+          {% for z in zones %}
+          <tr><td>{{ z.name }}</td><td class="text-end">{{ z.lo_bpm }}–{{ z.hi_bpm }}</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </details>
+  {% endif %}
 </div>
 {% endblock %}

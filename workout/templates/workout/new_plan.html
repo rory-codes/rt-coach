@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% block content %}
 <div class="container mt-4">
   <div class="row">
@@ -10,17 +11,17 @@
             {% csrf_token %}
             <div class="mb-3">
               <label class="form-label">Experience</label>
-              {{ form.experience|add_class:"form-select" }}
+              {{ form.experience }}
             </div>
             <div class="mb-3">
               <label class="form-label">Goal</label>
-              {{ form.goal|add_class:"form-select" }}
+              {{ form.goal }}
             </div>
             {{ form.age }} {{ form.rhr }} {{ form.tenrm_json }}
             <button type="submit" class="btn btn-primary">Generate plan</button>
-            <a href="{% url 'fitness_data:fitness_page' %}" class="btn btn-link">Go to Fitness Data</a>
+            <a href="{% url 'fitness_data:fitness_page' %}" class="btn btn-link">Back to Fitness Data</a>
           </form>
-          <small class="text-muted d-block mt-2">Tip: from the Fitness Data page, click “Send to Workout” to auto-fill your metrics here.</small>
+          <small class="text-muted d-block mt-2">Tip: add a “Send to Workout” button on Fitness Data to prefill these hidden fields.</small>
         </div>
       </div>
     </div>
