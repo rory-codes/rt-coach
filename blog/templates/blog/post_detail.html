@@ -2,12 +2,10 @@
 {% load static %}
 {% load crispy_forms_tags %}
 
-{# Full-width hero overrides base.html's block #}
 {% block hero %}
 <section class="container-fluid px-0">
   <div class="masthead">
     <div class="masthead-image">
-      {# use default; swap to a field if you add one later #}
       <img class="masthead-photo" src="{% static 'img/default.jpg' %}" alt="">
     </div>
     <div class="masthead-text">
@@ -27,64 +25,70 @@
       </div>
     </div>
   </div>
-  <!-- Displaying count of comments -->
+
   <div class="row">
     <div class="col-12">
       <strong class="text-secondary">
         <i class="far fa-comments"></i> {{ comment_count }}
       </strong>
     </div>
-    <div class="col-12">
-      <hr>
-    </div>
+    <div class="col-12"><hr></div>
   </div>
-  <!-- Displaying Comments -->
+
   <div class="row">
-    <div class="col-md-8 card mb-4  mt-3 ">
-      <h3>Comments:</h3>
+    <div class="col-md-8 card mb-4 mt-3">
+      <h3 id="comments">Comments:</h3>
       <div class="card-body">
-        <!-- for loop inside the empty control tags
-          to iterate through comments -->
         {% for comment in comments %}
-        <div class="p-2 comments
-          {% if not comment.approved and comment.author == user %}
-          faded{% elif not comment.approved %} d-none{% endif %}">
-          <p class="font-weight-bold">
-            {{ comment.author }}
-            <span class="font-weight-normal">
-              {{ comment.created_on }}
-            </span> wrote:
-          </p>
-          <div id="comment{{ comment.id }}">
-            {{ comment.body | linebreaks }}
+          <div class="p-2 comments
+            {% if not comment.approved and comment.author == user %}faded
+            {% elif not comment.approved %} d-none{% endif %}">
+            <p class="fw-bold">
+              {{ comment.author }}
+              <span class="fw-normal">{{ comment.created_on }}</span> wrote:
+            </p>
+
+            <div id="comment{{ comment.id }}">{{ comment.body|linebreaks }}</div>
+
+            {% if not comment.approved and comment.author == user %}
+              <p class="approval">This comment is awaiting approval</p>
+            {% endif %}
+
+            {% if user.is_authenticated and comment.author == user %}
+              <button type="button"
+                      class="btn btn-sm btn-outline-secondary mt-2 btn-edit"
+                      data-comment-id="{{ comment.id }}"
+                      data-edit-url="{% url 'blog:comment_edit' slug=post.slug comment_id=comment.id %}">
+                Edit
+              </button>
+            {% endif %}
           </div>
-          {% if not comment.approved and comment.author == user %}
-          <p class="approval">
-            This comment is awaiting approval
-          </p>
-          {% endif %}
-        </div>
-        <!-- Our for loop ends here -->
+        {% empty %}
+          <p class="text-muted mb-0">No comments yet.</p>
         {% endfor %}
       </div>
     </div>
-    
-    <!-- Creating New Comments -->
+
     <div class="col-md-4 card mb-4 mt-3">
       <div class="card-body">
         {% if user.is_authenticated %}
-        <h3>Leave a comment:</h3>
-        <p>Posting as: {{ user.username }}</p>
-        <form id="commentForm" method="post" style="margin-top: 1.3em;">
-          {{ comment_form | crispy }}
-          {% csrf_token %}
-          <button id="submitButton" type="submit" class="btn btn-signup btn-lg">Submit</button>
-        </form>
+          <h3>Leave a comment:</h3>
+          <p>Posting as: {{ user.username }}</p>
+          <form id="commentForm" method="post" style="margin-top: 1.3em;">
+            {% csrf_token %}
+            {{ comment_form|crispy }}
+            <button id="submitButton" type="submit" class="btn btn-signup btn-lg">Submit</button>
+          </form>
         {% else %}
-        <p>Log in to leave a comment</p>
+          <p>Log in to leave a comment</p>
         {% endif %}
       </div>
     </div>
   </div>
 </div>
+{% endblock %}
+
+
+{% block extra_js %}
+  <script src="{% static 'blog/js/comments.js' %}" defer></script>
 {% endblock %}
