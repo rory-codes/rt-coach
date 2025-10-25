@@ -26,6 +26,7 @@
     </div>
   </div>
 
+  <!-- Comment count -->
   <div class="row">
     <div class="col-12">
       <strong class="text-secondary">
@@ -36,39 +37,47 @@
   </div>
 
   <div class="row">
+    <!-- Comments -->
     <div class="col-md-8 card mb-4 mt-3">
       <h3 id="comments">Comments:</h3>
       <div class="card-body">
         {% for comment in comments %}
-          <div class="p-2 comments
-            {% if not comment.approved and comment.author == user %}faded
-            {% elif not comment.approved %} d-none{% endif %}">
-            <p class="fw-bold">
-              {{ comment.author }}
-              <span class="fw-normal">{{ comment.created_on }}</span> wrote:
-            </p>
+  <div class="p-2 comments
+    {% if not comment.approved and comment.author == user %}faded
+    {% elif not comment.approved %} d-none{% endif %}">
+    <p class="fw-bold">
+      {{ comment.author }}
+      <span class="fw-normal">{{ comment.created_on }}</span> wrote:
+    </p>
 
-            <div id="comment{{ comment.id }}">{{ comment.body|linebreaks }}</div>
+    <div id="comment{{ comment.id }}">{{ comment.body|linebreaks }}</div>
 
-            {% if not comment.approved and comment.author == user %}
-              <p class="approval">This comment is awaiting approval</p>
-            {% endif %}
+    {% if not comment.approved and comment.author == user %}
+      <p class="approval">This comment is awaiting approval</p>
+    {% endif %}
 
-            {% if user.is_authenticated and comment.author == user %}
-              <button type="button"
-                      class="btn btn-sm btn-outline-secondary mt-2 btn-edit"
-                      data-comment-id="{{ comment.id }}"
-                      data-edit-url="{% url 'blog:comment_edit' slug=post.slug comment_id=comment.id %}">
-                Edit
-              </button>
-            {% endif %}
-          </div>
-        {% empty %}
-          <p class="text-muted mb-0">No comments yet.</p>
-        {% endfor %}
+    {% if user.is_authenticated and comment.author == user or user.is_staff %}
+      <a class="btn btn-sm btn-outline-secondary mt-2"
+         href="{% url 'blog:comment_edit' slug=post.slug comment_id=comment.id %}">
+        Edit
+      </a>
+      <form method="post"
+            action="{% url 'blog:comment_delete' slug=post.slug comment_id=comment.id %}"
+            class="d-inline"
+            onsubmit="return confirm('Delete this comment?');">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-sm btn-outline-danger mt-2">Delete</button>
+      </form>
+    {% endif %}
+  </div>
+{% empty %}
+  <p class="text-muted mb-0">No comments yet.</p>
+{% endfor %}
+
       </div>
     </div>
 
+    <!-- New comment -->
     <div class="col-md-4 card mb-4 mt-3">
       <div class="card-body">
         {% if user.is_authenticated %}
@@ -88,7 +97,7 @@
 </div>
 {% endblock %}
 
-
 {% block extra_js %}
+  {# Keep this only if the file exists at blog/static/blog/js/comments.js #}
   <script src="{% static 'blog/js/comments.js' %}" defer></script>
 {% endblock %}
