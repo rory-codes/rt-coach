@@ -322,7 +322,7 @@ black --check .
 
 **Prerequisites**
 
-* Python 3.11+ (you’re on 3.13, good)
+* Python 3.13
 * Node optional (for tooling only)
 
 **Setup**
@@ -396,7 +396,7 @@ jobs:
 
 * Django, django-allauth, django-summernote
 * Bootstrap 5, Font Awesome
-* Images: your assets (compressed via Squoosh)
+* Images: assets (compressed via Squoosh)
 * Thanks to mentors and collaborators 🙏
 
 ---
@@ -432,6 +432,7 @@ jobs:
 | 5–8 | Build | Z3 threshold | Hypertrophy % loads |
 | 9–11 | Peak | Z4 efforts | Strength % loads |
 | 12 | Deload | Z1–2 | ~50–60% loads |
+
 
 
 
