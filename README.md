@@ -22,16 +22,21 @@ A Django web app for publishing training content, capturing personal metrics (BM
    2. [Data Model (ERD)](#data-model-erd)
    3. [Key Flows](#key-flows)
 5. [Features](#features)
-6. [Non-Functional Requirements](#non-functional-requirements)
-7. [Testing](#testing)
+6. [Design & Wireframes](#design--wireframes)
+   1. [Design Principles](#design-principles)
+   2. [Branding & UI](#branding--ui)
+   3. [Wireframes](#wireframes)
+7. [Non-Functional Requirements](#non-functional-requirements)
+8. [Testing](#testing)
    1. [Automated Test Matrix](#automated-test-matrix)
    2. [Manual Test Scripts](#manual-test-scripts)
    3. [Accessibility & Performance](#accessibility--performance)
-8. [Local Development](#local-development)
-9. [Deployment](#deployment)
-10. [Known Issues / Future Work](#known-issues--future-work)
-11. [Credits](#credits)
-12. [Appendix: Detailed Logic Tables](#appendix-detailed-logic-tables)
+9. [Local Development](#local-development)
+10. [Deployment](#deployment)
+11. [Bugs](#bugs)
+12. [Known Issues / Future Work](#known-issues--future-work)
+13. [Credits](#credits)
+14. [Appendix: Detailed Logic Tables](#appendix-detailed-logic-tables)
 
 ---
 
@@ -115,6 +120,7 @@ package "RT Coach (Django)" {
 
 @enduml
 ```
+
 ### Data Model (ERD)
 
 ```plantuml
@@ -234,6 +240,43 @@ NPV -> Member : 302 -> /workout/plan/<id>/
 * **Workout:** new plan (experience/goal), plan detail, CSV export (stub exists, expand as needed).
 * **Auth:** login/register/logout via Django Allauth.
 * **Static:** fingerprinted static assets; per-app static directories and global.
+
+---
+
+## Design & Wireframes
+
+### Design Principles
+* **Clarity first:** clean typography, clear hierarchy, generous spacing.
+* **Mobile-first:** layout builds from small screens up (flex/grid for responsive rows).
+* **Consistency:** shared components for cards, tables, and forms; consistent CTA styles.
+* **Feedback:** calculators and forms provide instant, accessible feedback (`aria-live="polite"`).
+* **Performance:** optimized images (WebP where supported), lazy loading for non-critical visuals.
+
+### Branding & UI
+* **Color:** a restrained palette (primary for CTAs, neutral backgrounds for readability).  
+* **Typography:** headings use a strong, readable sans-serif; body text uses a legible sans with 1.6 line-height.  
+* **Components:**  
+  - **Cards** for posts and workout blocks (soft shadows, rounded corners).  
+  - **Tables** for exported/structured data (load tables, CSV outputs).  
+  - **Forms** with clear labels, hints, and validation errors anchored near inputs.  
+* **Icons:** lightweight icon set (e.g., Font Awesome) for subtle affordances (download, edit, comment).  
+* **Accessibility:** focus outlines retained, sufficient contrast, labeled inputs, and skip-to-content link.
+
+### Wireframes
+> Place the following images in your repo if you have them (or generate quickly), then reference them here.  
+> Suggested files:  
+> `docs/wireframes/rt-coach-mobile-home.png`,  
+> `docs/wireframes/rt-coach-tablet-calculators.png`,  
+> `docs/wireframes/rt-coach-desktop-plan-detail.png`.
+
+**Home (mobile)**  
+![Home (mobile)](docs/wireframes/rt-coach-mobile-home.png)
+
+**Calculators (tablet)**  
+![Calculators (tablet)](docs/wireframes/rt-coach-tablet-calculators.png)
+
+**Plan Detail (desktop)**  
+![Plan Detail (desktop)](docs/wireframes/rt-coach-desktop-plan-detail.png)
 
 ---
 
@@ -382,6 +425,218 @@ jobs:
 
 ---
 
+## Bugs
+
+### Summary Table
+
+| ID | Symptom | Root Cause | Fix |
+|---|---|---|---|
+| B01 | `OperationalError: no such column: blog_post.featured_image` | Model changed, DB not migrated | Make field nullable, run `makemigrations` + `migrate` |
+| B02 | Post list slow / template stutter | N+1 queries (author/comments per post) | `select_related('author')`, `prefetch_related('comment_set')` |
+| B03 | 500 on comment edit by non-author | Missing author permission check | Guard in view + 403/redirect |
+| B04 | Pagination shows empty page / off-by-one | Queryset ordering + page param not validated | Order, clamp page, show last page when OOB |
+| B05 | Static files 404 on Heroku | No `collectstatic`/Whitenoise config | Add `STATIC_ROOT`, run collectstatic, Whitenoise middleware order |
+| B06 | 403 CSRF in prod | Missing `CSRF_TRUSTED_ORIGINS` for Heroku domain | Add `https://*.herokuapp.com` |
+| B07 | 400 “Bad Request” on prod | `ALLOWED_HOSTS` missing app hostname | Add Heroku host to `ALLOWED_HOSTS` |
+| B08 | Calculator rounds down wrong | Using `parseInt` on decimals | Use `parseFloat` + explicit `Math.round` |
+| B09 | CSV export downloads as plain text | Missing `Content-Disposition` / content type | Set `text/csv` and attachment filename |
+| B10 | Planner weeks start at 0 | Loop index used as week number | Add `+1` and validate 1–12 |
+| B11 | Template error when image missing | `post.featured_image.url` when null | Make field `null=True, blank=True` + template guard |
+| B12 | Wrong order in blog feed across timezones | Naive vs aware datetimes | `USE_TZ=True`, ensure aware timestamps + `order_by('-created_on')` |
+
+### Detailed Bugs & Fixes
+
+#### B01 — `no such column: blog_post.featured_image`
+**Expected:** Homepage renders post grid.  
+**Actual:** 500 with `OperationalError` referencing `blog_post.featured_image`.
+
+**Root cause:** Added `featured_image` to `Post` model but the SQLite schema wasn’t migrated.
+
+**Fix (safe, without data loss):**
+```python
+# blog/models.py
+from django.db import models
+# If using Cloudinary: from cloudinary.models import CloudinaryField
+
+class Post(models.Model):
+    # ...
+    featured_image = models.ImageField(upload_to="blog/", null=True, blank=True)
+    # Or: featured_image = CloudinaryField("image", null=True, blank=True)
+```
+
+```bash
+python manage.py makemigrations blog
+python manage.py migrate
+```
+
+**Template guard:**
+```django
+{% if post.featured_image %}
+  <img src="{{ post.featured_image.url }}" alt="{{ post.title }}">
+{% endif %}
+```
+
+---
+
+#### B02 — N+1 queries on Post list
+**Expected:** `/` renders quickly.  
+**Actual:** Slow render; DB log shows many small queries.
+
+**Fix:**
+```python
+class PostListView(ListView):
+    model = Post
+    paginate_by = 6
+    queryset = (
+        Post.objects.filter(status=1)
+        .select_related("author")
+        .prefetch_related("comment_set")
+        .order_by("-created_on")
+    )
+```
+---
+
+#### B03 — Editing comments as non-author throws 500
+**Fix:**
+```python
+from django.core.exceptions import PermissionDenied
+
+def comment_edit(request, slug, id):
+    comment = get_object_or_404(Comment, pk=id, post__slug=slug)
+    if request.user != comment.author and not request.user.is_staff:
+        raise PermissionDenied
+    # proceed…
+```
+---
+
+#### B04 — Pagination off-by-one / empty last page
+**Fix:**
+```python
+from django.core.paginator import Paginator, EmptyPage
+
+def list_view(request):
+    qs = Post.objects.filter(status=1).order_by("-created_on")
+    paginator = Paginator(qs, 6)
+    page = request.GET.get("page", 1)
+    try:
+        posts = paginator.page(page)
+    except EmptyPage:
+        posts = paginator.page(paginator.num_pages)
+    return render(request, "blog/index.html", {"post_list": posts})
+```
+---
+
+#### B05 — Static files 404 in production
+**Fix:**
+```python
+# settings.py
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+MIDDLEWARE = [
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+    # ...
+]
+
+STORAGES = {
+  "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
+}
+```
+```bash
+python manage.py collectstatic --noinput
+```
+---
+
+#### B06 — CSRF failures on Heroku
+**Fix:**
+```python
+CSRF_TRUSTED_ORIGINS = [
+  "https://*.herokuapp.com",
+  "https://rt-coach-b6ced22546ee.herokuapp.com",
+]
+```
+---
+
+#### B07 — 400 “Bad Request” in prod
+**Fix:**
+```python
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "rt-coach-b6ced22546ee.herokuapp.com"]
+```
+---
+
+#### B08 — Calculator rounding errors
+**Fix (JS):**
+```js
+function roundTo(x, increment) {
+  const n = parseFloat(x);
+  const inc = parseFloat(increment);
+  return Math.round(n / inc) * inc;
+}
+```
+---
+
+#### B09 — CSV export downloads as text
+**Fix:**
+```python
+def plan_export_csv(request, id):
+    plan = get_object_or_404(WorkoutPlan, pk=id, user=request.user)
+    resp = HttpResponse(content_type="text/csv")
+    resp["Content-Disposition"] = f'attachment; filename="plan-{plan.id}.csv' + '"'  # closing quote
+    writer = csv.writer(resp)
+    writer.writerow(["Week","Phase","Cardio","Strength","Mobility"])
+    for b in plan.workoutblock_set.order_by("week_num"):
+        writer.writerow([b.week_num, b.phase, b.cardio_target, b.strength_target, b.mobility_target])
+    return resp
+```
+---
+
+#### B10 — Planner weeks start at 0
+**Fix:**
+```python
+for i in range(12):
+    week_num = i + 1
+    WorkoutBlock.objects.create(plan=plan, week_num=week_num, ...)
+```
+---
+
+#### B11 — Template error when image missing
+**Fix:** Guard in template (see B01).
+
+---
+
+#### B12 — Post ordering wrong across timezones
+**Fix:**
+```python
+USE_TZ = True
+TIME_ZONE = "UTC"
+```
+Ensure datetimes are aware; sort by `-created_on`.
+
+### Validation (Before / After Snapshots)
+
+| Area | Before | After |
+|---|---|---|
+| Home page render | 500 (`featured_image` column missing) | 200 OK; images render when present, guarded when null |
+| Post list queries | ~1 + (N×2) queries | ~1 + 2 queries (with `select_related`/`prefetch_related`) |
+| Comment edit (non-author) | 500 error | 403 PermissionDenied (or redirect) |
+| Heroku static | 404s for CSS/JS | Served via Whitenoise; cache-busted filenames |
+| CSRF in prod | 403 on POST | Successful POSTs with trusted origins |
+| CSV export | Opens in browser as text | Prompts download `plan-<id>.csv` |
+
+**Developer Commands**
+```bash
+python manage.py makemigrations blog
+python manage.py migrate
+python manage.py showmigrations blog
+python manage.py collectstatic --noinput
+python manage.py dbshell
+.schema blog_post
+.quit
+```
+
+---
+
 ## Known Issues / Future Work
 
 * Workout builder currently creates a single plan per submission; add “My Plans” list view.
@@ -432,8 +687,3 @@ jobs:
 | 5–8 | Build | Z3 threshold | Hypertrophy % loads |
 | 9–11 | Peak | Z4 efforts | Strength % loads |
 | 12 | Deload | Z1–2 | ~50–60% loads |
-
-
-
-
-
