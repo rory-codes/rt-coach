@@ -270,3 +270,34 @@ flake8 .
 black --check .
 ```
 
+### Manual Test Scripts
+
+**Navigation **
+
+| Route | Expected |
+| --- | --- |
+| `/` | Post list loads; pagination works. |
+| `/fitness/` | Calculators load; Calculate/Clear work; CSV export downloads. |
+| `/workout/new/` (auth) | Form shows; POST yields redirect to plan detail. |
+| `/workout/plan/<id>/` (auth) | Plan renders weekly table/cards; CSV export works. |
+
+**Comment create/edit**
+
+| Step | Expected |
+| --- | --- |
+| Submit as guest | Redirect to login message. |
+| Submit as user | PRG redirect; success message; comment visible/pending. |
+| Click Edit (author) | Edit form opens; save updates content; message shown. |
+
+**10RM table**
+
+| Step | Expected |
+| --- | --- |
+| Enter 10RM for “Squat” | Est. 1RM & phase loads populate. |
+| Change units kg↔lb | Values convert; headers update. |
+| Change increment | Rounding reflects selected increment. |
+| CSV export | File contains headers & rows entered. |
+
+### Accessibility & Performance
+
+
