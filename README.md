@@ -356,4 +356,83 @@ python manage.py collectstatic --noinput
 
 ---
 
+## Deployment
+
+* Set `DEBUG=False`, `ALLOWED_HOSTS`, database URL, and email backend in environment.
+* Run `migrate` and `collectstatic`.
+* (Optional) GitHub Actions CI/CD: run tests, flake8, black, collectstatic on build.
+
+**Example GitHub Actions (pytest + flake8)**
+
+```yaml
+name: CI
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: pip install -r requirements.txt
+      - run: flake8 .
+      - run: black --check .
+      - run: pytest -q
+```
+
+---
+
+## Known Issues / Future Work
+
+* Workout builder currently creates a single plan per submission; add “My Plans” list view.
+* Optional moderation toggle for comments.
+* Persist fitness inputs to user profile for prefill.
+* Add PDF export for plans.
+* Add calendar integration (ICS).
+
+---
+
+## Credits
+
+* Django, django-allauth, django-summernote
+* Bootstrap 5, Font Awesome
+* Images: your assets (compressed via Squoosh)
+* Thanks to mentors and collaborators 🙏
+
+---
+
+## Appendix: Detailed Logic Tables
+
+### Heart-Rate Zones (Karvonen / HRR)
+
+| Zone | %HRR | Formula |
+| --- | --- | --- |
+| 1 | 50–60% | `RHR + HRR*0.50 → RHR + HRR*0.60` |
+| 2 | 60–70% | `RHR + HRR*0.60 → RHR + HRR*0.70` |
+| 3 | 70–80% | `RHR + HRR*0.70 → RHR + HRR*0.80` |
+| 4 | 80–90% | `RHR + HRR*0.80 → RHR + HRR*0.90` |
+| 5 | 90–100% | `RHR + HRR*0.90 → RHR + HRR*1.00` |
+
+### 10RM → 1RM & Phase Loads
+
+| Item | Formula |
+| --- | --- |
+| Est. 1RM (Epley) | `1RM = 10RM * (1 + 10/30)` |
+| Endurance | ~60% 1RM |
+| Hypertrophy | ~72% 1RM |
+| Strength | ~85% 1RM |
+| Power | ~65% 1RM |
+| Rounding | to user-selected increment; unit toggle kg/lb |
+
+### 12-Week Periodisation (example template)
+
+| Weeks | Phase | Cardio Focus | Strength Focus |
+| --- | --- | --- | --- |
+| 1–4 | Base | Z2 volume | Endurance % loads |
+| 5–8 | Build | Z3 threshold | Hypertrophy % loads |
+| 9–11 | Peak | Z4 efforts | Strength % loads |
+| 12 | Deload | Z1–2 | ~50–60% loads |
+
+
+
 
