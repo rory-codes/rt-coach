@@ -51,3 +51,41 @@ A Django web app for publishing training content, capturing personal metrics (BM
 * **Coach/Admin:** manages posts, pages, and moderates comments.
 
 ---
+
+## User Stories (MoSCoW + Acceptance Criteria)
+
+### Blog
+
+| ID | Priority | Story | Acceptance Criteria (Given/When/Then) |
+| --- | --- | --- | --- |
+| B1 | Must | As a reader, I want to browse posts so I can learn about training. | **G** posts exist **W** I visit `/` **T** I see a paginated list with titles, excerpts, dates. |
+| B2 | Must | As a user, I want to read a full post and its comments. | **G** a post exists **W** I open `/slug/` **T** I see full content + comments count & list. |
+| B3 | Must | As an authenticated user, I want to add a comment. | **G** I’m logged in **W** I submit the comment form **T** I’m redirected via PRG, my comment appears (pending if moderation is on). |
+| B4 | Should | As a comment author, I want to edit my comment. | **G** I authored the comment **W** I click Edit and submit changes **T** The body updates, and moderation resets if configured. |
+
+### Fitness Data
+
+| ID | Priority | Story | Acceptance Criteria |
+| --- | --- | --- | --- |
+| F1 | Must | As a user, I want BMI computed from weight & height. | **G** I enter kg/cm **W** I click Calculate **T** I see BMI value + category. |
+| F2 | Must | As a user, I want WHR computed from waist/hip. | **G** I enter waist/hip **W** Calculate **T** I see ratio. |
+| F3 | Must | As a user, I want HR zones from age & RHR (Karvonen). | **G** I enter age & RHR **W** Calculate **T** I see Zone 1–5 ranges (bpm). |
+| F4 | Should | As a user, I want 10RM inputs → phase loads. | **G** I enter 10RM **W** Calculate **T** I get Est. 1RM + Endurance/Hypertrophy/Strength/Power loads (rounded; unit toggle). |
+| F5 | Could | As a user, I want CSV export of phase loads. | **G** I’ve calculated **W** I click Download CSV **T** A CSV downloads. |
+
+### Workout Planner
+
+| ID | Priority | Story | Acceptance Criteria |
+| --- | --- | --- | --- |
+| W1 | Must | As a member, I can create a plan by experience level & goal. | **G** I’m logged in **W** I submit the form **T** A plan is saved and shown at `/workout/plan/<id>/`. |
+| W2 | Must | The plan uses my Fitness Data (HR zones / loads). | **G** My inputs exist **W** I create a plan **T** It derives HR targets and resistance loads per phase/week. |
+| W3 | Should | I can export a plan as CSV. | **G** Plan exists **W** I click Export CSV **T** File downloads with weekly structure. |
+| W4 | Could | I can view my plans list. | **G** I’m logged in **W** I open `/workout/` **T** I see my plans. |
+
+### Accounts & Admin
+
+| ID | Priority | Story | Acceptance Criteria |
+| --- | --- | --- | --- |
+| A1 | Must | As an admin, I want to manage posts/comments in Django admin. | Standard Django admin flows. |
+| A2 | Should | As admin, I can toggle moderation. | Setting or field controls approval workflow. |
+
