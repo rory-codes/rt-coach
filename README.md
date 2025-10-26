@@ -115,3 +115,116 @@ package "RT Coach (Django)" {
 
 @enduml
 ```
+### Data Model (ERD)
+
+```plantuml
+@startuml
+entity "auth_user" as User {
+  * id : pk
+  username
+  email
+  ...
+}
+
+entity Post {
+  * id : pk
+  title : str
+  slug : str [unique]
+  author_id : fk -> User
+  content : text
+  status : int (0 draft,1 published)
+  excerpt : text
+  created_on : datetime
+  updated_on : datetime
+}
+
+entity Comment {
+  * id : pk
+  post_id : fk -> Post
+  author_id : fk -> User
+  body : text
+  approved : bool
+  created_on : datetime
+}
+
+entity FitnessData {
+  * id : pk
+  title : str
+  content : text
+  updated_on : datetime
+}
+
+entity WorkoutPlan {
+  * id : pk
+  user_id : fk -> User
+  experience_level : enum(beg, int, exp)
+  goal : enum(cardio, strength, balanced)
+  hr_profile_json : json
+  loads_profile_json : json
+  created_on : datetime
+}
+
+entity WorkoutBlock {
+  * id : pk
+  plan_id : fk -> WorkoutPlan
+  week_num : int
+  phase : enum(base, build, peak, deload)
+  cardio_target : str
+  strength_target : str
+  mobility_target : str
+}
+
+User ||--o{ Post
+User ||--o{ Comment
+Post ||--o{ Comment
+User ||--o{ WorkoutPlan
+WorkoutPlan ||--o{ WorkoutBlock
+@enduml
+```
+
+### Key Flows
+
+**Comment (Edit) flow**
+
+```plantuml
+@startuml
+actor User
+participant "Post Detail View" as PDV
+participant "Comment Edit View" as CEV
+database DB
+
+User -> PDV : GET /post/<slug>/
+PDV -> DB : fetch Post, Comments
+PDV -> User : 200 (page + Edit buttons)
+
+User -> CEV : GET /post/<slug>/comment/<id>/edit/
+CEV -> DB : load comment (author == request.user?)
+CEV -> User : 200 (form)
+
+User -> CEV : POST form
+CEV -> DB : validate + save (re-approve if needed)
+CEV -> User : 302 redirect -> /post/<slug>/#comments
+@enduml
+```
+
+**Workout plan generation**
+
+```plantuml
+@startuml
+actor Member
+participant "new_plan view" as NPV
+participant "planner service" as SVC
+database DB
+
+Member -> NPV : POST {level, goal}
+NPV -> DB : fetch prior fitness metrics (if any)
+NPV -> SVC : build 12-week plan (zones & loads)
+SVC -> NPV : plan object + blocks
+NPV -> DB : save plan + blocks
+NPV -> Member : 302 -> /workout/plan/<id>/
+@enduml
+```
+
+---
+
+
