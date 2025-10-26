@@ -227,4 +227,46 @@ NPV -> Member : 302 -> /workout/plan/<id>/
 
 ---
 
+## Features
+
+* **Blog:** listing, detail, comments (create & edit, PRG), moderation flag.
+* **Fitness Data:** BMI/WHR/HR zones, 10RM phase loads, CSV export, kg/lb & rounding increments.
+* **Workout:** new plan (experience/goal), plan detail, CSV export (stub exists, expand as needed).
+* **Auth:** login/register/logout via Django Allauth.
+* **Static:** fingerprinted static assets; per-app static directories and global.
+
+---
+
+## Non-Functional Requirements
+
+* **Performance:** pages under 2s on typical broadband; static caching via Django staticfiles/CDN.
+* **Accessibility:** WCAG 2.1 AA focus order, landmarks, ARIA `aria-live` used for calculators.
+* **Security:** CSRF on forms, login required for plan routes and commenting, author-check for comment edits.
+* **Observability:** server logs for POST/redirect and errors.
+* **Portability:** SQLite dev, Postgres prod.
+
+---
+
+## Testing
+### Automated Test Matrix
+
+| Area | What | Test Type | Example |
+| --- | --- | --- | --- |
+| Models | Post, Comment relations & ordering | Unit | comment orders by `created_on`; `__str__` returns expected. |
+| Views | PostList, post_detail | Unit/Integration | 200 responses; context keys exist; pagination. |
+| Comments | create/edit permissions | Unit/Integration | only author can edit; unauth POST redirects to login. |
+| Fitness Calc | BMI/WHR/HR zones logic | Unit | boundary clamps; Karvonen math; rounding. |
+| 10RM Loads | 1RM estimate & phase multipliers | Unit | Epley 1RM; % table; unit conversions. |
+| Workout Planner | plan saved; blocks created | Integration | POST `/workout/new/` creates plan + 12 blocks for 12 weeks. |
+| Templates | script/css links resolve | Integration | `/static/blog/js/comments.js` returns 200. |
+
+**Example pytest commands**
+
+```bash
+pytest
+pytest -k "workout or fitness" -q
+coverage run -m pytest && coverage html
+flake8 .
+black --check .
+```
 
