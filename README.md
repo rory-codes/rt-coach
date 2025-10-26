@@ -301,3 +301,59 @@ black --check .
 ### Accessibility & Performance
 
 
+* **Axe / WAVE:** no critical issues; all form controls have labels; contrast OK.
+* **Lighthouse:**
+  * Performance ≥ 90 (hero images compressed; lazy loading where appropriate)
+  * Accessibility ≥ 90
+  * Best Practices ≥ 90
+  * SEO ≥ 90
+
+**Accessibility test table**
+
+| Page | Tool | Result |
+| --- | --- | --- |
+| `/` | WAVE | 0 errors, 0 contrast issues |
+| `/fitness/` | Axe | 0 critical, 0 serious |
+| `/workout/new/` | Axe | 0 critical, 0 serious |
+
+---
+
+## Local Development
+
+**Prerequisites**
+
+* Python 3.11+ (you’re on 3.13, good)
+* Node optional (for tooling only)
+
+**Setup**
+
+```bash
+python -m venv .venv
+. .venv/Scripts/activate  # Windows (Git Bash: source .venv/Scripts/activate)
+pip install -r requirements.txt
+
+# env
+cp .env.example .env  # create and edit values as needed
+
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py runserver
+```
+
+**Static files (dev)**
+
+```python
+STATIC_URL = "/static/"
+STATICFILES_DIRS = [BASE_DIR / "static"]   # exists
+```
+
+**Static files (prod)**
+
+```bash
+STATIC_ROOT = BASE_DIR / "staticfiles"
+python manage.py collectstatic --noinput
+```
+
+---
+
+
