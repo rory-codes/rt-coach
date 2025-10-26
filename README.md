@@ -89,3 +89,29 @@ A Django web app for publishing training content, capturing personal metrics (BM
 | A1 | Must | As an admin, I want to manage posts/comments in Django admin. | Standard Django admin flows. |
 | A2 | Should | As admin, I can toggle moderation. | Setting or field controls approval workflow. |
 
+## System Design
+
+### Component Diagram
+
+```plantuml
+@startuml
+skinparam componentStyle rectangle
+
+package "RT Coach (Django)" {
+  [Blog App] --> [Templates]
+  [Fitness Data App] --> [Templates]
+  [Workout App] --> [Templates]
+  [Allauth] --> [Auth Views]
+  [Django Admin] --> [Admin Site]
+
+  [Blog App] --> [Post, Comment Models]
+  [Workout App] --> [WorkoutPlan, WorkoutBlock Models]
+  [Fitness Data App] --> [FitnessData Model]
+}
+
+[User Browser] --> [Templates] : HTTP GET/POST
+[Templates] --> [Staticfiles] : CSS/JS/Images
+[RT Coach (Django)] --> [PostgreSQL/SQLite] : ORM
+
+@enduml
+```
