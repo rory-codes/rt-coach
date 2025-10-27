@@ -10,3 +10,9 @@ __pycache__/
 *.pyo
 core.mongo*
 core.python*
+
+# Python/Django
+__pycache__/
+*.py[cod]
+*.sqlite3
+db.sqlite3
