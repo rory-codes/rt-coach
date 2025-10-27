@@ -16,6 +16,7 @@ A Django web app for publishing training content, capturing personal metrics (BM
 ## Table of Contents
 1. [Project Goals](#project-goals)
 2. [Users & Personas](#users--personas)
+3. [User Profiles](#user-profiles)
 3. [User Stories (MoSCoW / Acceptance Criteria)](#user-stories-moscow--acceptance-criteria)
 4. [System Design](#system-design)
    1. [Component Diagram](#component-diagram)
@@ -50,12 +51,32 @@ A Django web app for publishing training content, capturing personal metrics (BM
 ---
 
 ## Users & Personas
-
 * **Reader:** reads posts and calculators; not logged in.
 * **Member:** logs in, comments on posts, generates workout plans.
 * **Coach/Admin:** manages posts, pages, and moderates comments.
 
 ---
+
+
+
+---
+
+## User Profiles
+
+* **Reader**
+  * Goal: Consume training content without logging in.
+  * Needs: Fast loading, readable typography, simple navigation.
+  * Pain points: Paywalls, noisy UI, slow pages.
+
+* **Member**
+  * Goal: Comment on posts and generate personalised 12‑week plans from calculator inputs.
+  * Needs: Clear forms, error messages, and the ability to export plans.
+  * Pain points: Complex forms, unclear validation, losing work.
+
+* **Coach / Admin**
+  * Goal: Publish and manage posts, moderate comments, oversee content quality.
+  * Needs: Efficient admin lists, filters, and moderation toggles.
+  * Pain points: Manual busywork, confusing admin navigation.
 
 ## User Stories (MoSCoW + Acceptance Criteria)
 
@@ -63,29 +84,29 @@ A Django web app for publishing training content, capturing personal metrics (BM
 
 | ID | Priority | Story | Acceptance Criteria (Given/When/Then) |
 | --- | --- | --- | --- |
-| B1 | Must | As a reader, I want to browse posts so I can learn about training. | **G** posts exist **W** I visit `/` **T** I see a paginated list with titles, excerpts, dates. |
-| B2 | Must | As a user, I want to read a full post and its comments. | **G** a post exists **W** I open `/slug/` **T** I see full content + comments count & list. |
-| B3 | Must | As an authenticated user, I want to add a comment. | **G** I’m logged in **W** I submit the comment form **T** I’m redirected via PRG, my comment appears (pending if moderation is on). |
-| B4 | Should | As a comment author, I want to edit my comment. | **G** I authored the comment **W** I click Edit and submit changes **T** The body updates, and moderation resets if configured. |
+| B1 | Must | As a reader, I want to browse posts so I can learn about training. | **Given** posts exist **When** I visit `/` **Then** I see a paginated list with titles, excerpts, dates. |
+| B2 | Must | As a user, I want to read a full post and its comments. | **Given** a post exists **When** I open `/slug/` **Then** I see full content + comments count & list. |
+| B3 | Must | As an authenticated user, I want to add a comment. | **Given** I’m logged in **When** I submit the comment form **Then** I’m redirected via PRG, my comment appears (pending if moderation is on). |
+| B4 | Should | As a comment author, I want to edit my comment. | **Given** I authored the comment **When** I click Edit and submit changes **Then** The body updates, and moderation resets if configured. |
 
 ### Fitness Data
 
 | ID | Priority | Story | Acceptance Criteria |
 | --- | --- | --- | --- |
-| F1 | Must | As a user, I want BMI computed from weight & height. | **G** I enter kg/cm **W** I click Calculate **T** I see BMI value + category. |
-| F2 | Must | As a user, I want WHR computed from waist/hip. | **G** I enter waist/hip **W** Calculate **T** I see ratio. |
-| F3 | Must | As a user, I want HR zones from age & RHR (Karvonen). | **G** I enter age & RHR **W** Calculate **T** I see Zone 1–5 ranges (bpm). |
-| F4 | Should | As a user, I want 10RM inputs → phase loads. | **G** I enter 10RM **W** Calculate **T** I get Est. 1RM + Endurance/Hypertrophy/Strength/Power loads (rounded; unit toggle). |
-| F5 | Could | As a user, I want CSV export of phase loads. | **G** I’ve calculated **W** I click Download CSV **T** A CSV downloads. |
+| F1 | Must | As a user, I want BMI computed from weight & height. | **Given** I enter kg/cm **When** I click Calculate **Then** I see BMI value + category. |
+| F2 | Must | As a user, I want WHR computed from waist/hip. | **Given** I enter waist/hip **When** Calculate **Then** I see ratio. |
+| F3 | Must | As a user, I want HR zones from age & RHR (Karvonen). | **Given** I enter age & RHR **When** Calculate **Then** I see Zone 1–5 ranges (bpm). |
+| F4 | Should | As a user, I want 10RM inputs → phase loads. | **Given** I enter 10RM **When** Calculate **Then** I get Est. 1RM + Endurance/Hypertrophy/Strength/Power loads (rounded; unit toggle). |
+| F5 | Could | As a user, I want CSV export of phase loads. | **Given** I’ve calculated **When** I click Download CSV **Then** A CSV downloads. |
 
 ### Workout Planner
 
 | ID | Priority | Story | Acceptance Criteria |
 | --- | --- | --- | --- |
-| W1 | Must | As a member, I can create a plan by experience level & goal. | **G** I’m logged in **W** I submit the form **T** A plan is saved and shown at `/workout/plan/<id>/`. |
-| W2 | Must | The plan uses my Fitness Data (HR zones / loads). | **G** My inputs exist **W** I create a plan **T** It derives HR targets and resistance loads per phase/week. |
-| W3 | Should | I can export a plan as CSV. | **G** Plan exists **W** I click Export CSV **T** File downloads with weekly structure. |
-| W4 | Could | I can view my plans list. | **G** I’m logged in **W** I open `/workout/` **T** I see my plans. |
+| W1 | Must | As a member, I can create a plan by experience level & goal. | **Given** I’m logged in **When** I submit the form **Then** A plan is saved and shown at `/workout/plan/<id>/`. |
+| W2 | Must | The plan uses my Fitness Data (HR zones / loads). | **Given** My inputs exist **When** I create a plan **Then** It derives HR targets and resistance loads per phase/week. |
+| W3 | Should | I can export a plan as CSV. | **Given** Plan exists **When** I click Export CSV **Then** File downloads with weekly structure. |
+| W4 | Could | I can view my plans list. | **Given** I’m logged in **When** I open `/workout/` **Then** I see my plans. |
 
 ### Accounts & Admin
 
