@@ -291,13 +291,13 @@ NPV -> Member : 302 -> /workout/plan/<id>/
 > `docs/wireframes/rt-coach-desktop-plan-detail.png`.
 
 **Home (mobile)**  
-![Home (mobile)](docs/wireframes/rt-coach-mobile-home.png)
+![Home (mobile)](docs/wireframes/wireframe-blog-mobile.png)
 
 **Calculators (tablet)**  
-![Calculators (tablet)](docs/wireframes/rt-coach-tablet-calculators.png)
+![Calculators (tablet)](docs/wireframes/wireframe-fitness-tablet.png)
 
 **Plan Detail (desktop)**  
-![Plan Detail (desktop)](docs/wireframes/rt-coach-desktop-plan-detail.png)
+![Plan Detail (desktop)](docs/wireframes/wireframe-workout-laptop.png)
 
 ---
 
@@ -708,3 +708,4 @@ python manage.py dbshell
 | 5–8 | Build | Z3 threshold | Hypertrophy % loads |
 | 9–11 | Peak | Z4 efforts | Strength % loads |
 | 12 | Deload | Z1–2 | ~50–60% loads |
+
