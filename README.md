@@ -284,17 +284,15 @@ NPV -> Member : 302 -> /workout/plan/<id>/
 * **Accessibility:** focus outlines retained, sufficient contrast, labeled inputs, and skip-to-content link.
 
 ### Wireframes
-> Place the following images in your repo if you have them (or generate quickly), then reference them here.  
-> Suggested files:  
-> `docs/wireframes/rt-coach-mobile-home.png`,  
-> `docs/wireframes/rt-coach-tablet-calculators.png`,  
-> `docs/wireframes/rt-coach-desktop-plan-detail.png`.
+> `docs/wireframes/wireframe-blog-mobile.png.png`,  
+> `docs/wireframes/wireframe-fitness-tablet.png`,  
+> `docs/wireframes/wireframe-workout-laptop.png'.
 
 **Home (mobile)**  
-![Home (mobile)](docs/wireframes/wireframe-blog-mobile.png)
+![Blog (mobile)](docs/wireframes/wireframe-blog-mobile.png)
 
-**Calculators (tablet)**  
-![Calculators (tablet)](docs/wireframes/wireframe-fitness-tablet.png)
+**Fitness (tablet)**  
+![Fitness_data (tablet)](docs/wireframes/wireframe-fitness-tablet.png)
 
 **Plan Detail (desktop)**  
 ![Plan Detail (desktop)](docs/wireframes/wireframe-workout-laptop.png)
@@ -371,6 +369,10 @@ black --check .
   * Accessibility ≥ 90
   * Best Practices ≥ 90
   * SEO ≥ 90
+
+![blog (lighthouse blog testing)](docs/wireframes/lighthouse_blog.png)
+![Fitness data (Fitness data testing)](docs/wireframes/lighthouse_fitness.png)
+![Workout (lighthouse workout testing)](docs/wireframes/lighthouse_workout.png)
 
 **Accessibility test table**
 
@@ -708,4 +710,5 @@ python manage.py dbshell
 | 5–8 | Build | Z3 threshold | Hypertrophy % loads |
 | 9–11 | Peak | Z4 efforts | Strength % loads |
 | 12 | Deload | Z1–2 | ~50–60% loads |
+
 
