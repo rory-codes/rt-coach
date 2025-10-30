@@ -13,3 +13,7 @@
 /* Minor spacing */
 .card-body { padding: 1.25rem; }
 .form-text { font-size: .8rem; }
+
+/*Wave fixes*/
+.text-muted { color: #495057; }
+small, .small { font-size: 0.9375rem; line-height: 1.35; }
