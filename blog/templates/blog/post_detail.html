@@ -1,3 +1,5 @@
+<!--Used CI code from django blog as base code and made changes to it to allign with project-->
+
 {% extends "base.html" %}
 {% load static %}
 {% load crispy_forms_tags %}
@@ -47,7 +49,7 @@
     {% elif not comment.approved %} d-none{% endif %}">
     <p class="fw-bold">
       {{ comment.author }}
-      <span class="fw-normal">{{ comment.created_on }}</span> wrote:
+      <span class="fw-normal">{{ comment.created_on|date:'M. j, Y' }}</span> wrote:
     </p>
 
     <div id="comment{{ comment.id }}">{{ comment.body|linebreaks }}</div>
