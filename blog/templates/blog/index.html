@@ -1,3 +1,5 @@
+<!--Used CI code from django blog as base code and made changes to it to allign with project-->
+
 {% extends "base.html" %}
 {% load static %}
 
@@ -22,7 +24,7 @@
               </a>
               <hr />
               <p class="card-text text-muted h6 mb-0">
-                <time datetime="{{ post.created_on|date:'c' }}">{{ post.created_on }}</time>
+                <time datetime="{{ post.created_on|date:'Y-m-d\\TH:i:sP }}">{{ post.created_on|date:'M. j, Y' }}</time>
               </p>
             </div>
           </div>
