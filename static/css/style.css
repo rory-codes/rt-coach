@@ -176,17 +176,24 @@ img { max-width: 100%; height: auto; display: block; }
 .post-title   { 
     margin: 8% 0 0 4%; 
     font-weight: 700; 
+    background-color: var(--rt-bg);
+    border: var(--rt-accent);
+    border-radius: 0.4rem;
 }
 .post-subtitle { 
     margin-left: 4%; 
-    color: var(--rt-accent-50); 
+    color: var(--rt-ink); 
+    background-color: var(--rt-accent-50);
+    border: var(--rt-accent);
+    border-radius: 0.4rem;
 }
 
 .faded { color: #f1f2f4; }
 
 .bg-white {
   background-color: #f7f8fc;
-}
+  border: var(--rt-accent);
+  border-radius: 0.4rem}
 
 .rt-coach {
   color: var(--rt-ink-2);

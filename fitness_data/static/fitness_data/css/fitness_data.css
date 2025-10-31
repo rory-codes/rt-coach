@@ -3,7 +3,7 @@
 .masthead-image, .masthead-photo { position: absolute; inset: 0; }
 .masthead-photo { width: 100%; height: 100%; object-fit: cover; object-position: center; }
 .masthead::before { content: ""; position: absolute; inset: 0; background: rgba(0,0,0,.28); }
-.masthead-text { position: relative; z-index: 1; color: #fff; padding: 3.25rem; }
+.masthead-text { position: relative; z-index: 1; color: #000000; padding: 3.25rem; }
 @media (max-width: 576px){ .masthead{ min-height: 42vh } .masthead-text{ padding: 1.5rem } }
 
 /* Tables */
