@@ -182,7 +182,15 @@ img { max-width: 100%; height: auto; display: block; }
     color: var(--rt-accent-50); 
 }
 
-.faded { color: #96a0ad; }
+.faded { color: #f1f2f4; }
+
+.bg-white {
+  background-color: #f7f8fc;
+}
+
+.rt-coach {
+  color: var(--rt-ink-2);
+}
 
 /* Buttons */
 .btn-signup,

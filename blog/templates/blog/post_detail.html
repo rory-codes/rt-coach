@@ -12,7 +12,7 @@
     </div>
     <div class="masthead-text">
       <h1 class="post-title">{{ post.title }}</h1>
-      <p class="post-subtitle">{{ post.author }} | {{ post.created_on }}</p>
+      <p class="post-subtitle">{{ post.author }} | {{ post.created_on|date:"M. j, Y" }}</p>
     </div>
   </div>
 </section>
@@ -49,7 +49,7 @@
     {% elif not comment.approved %} d-none{% endif %}">
     <p class="fw-bold">
       {{ comment.author }}
-      <span class="fw-normal">{{ comment.created_on|date:'M. j, Y' }}</span> wrote:
+      <span class="fw-normal">{{ comment.created_on|date:"M. j, Y" }}</span> wrote:
     </p>
 
     <div id="comment{{ comment.id }}">{{ comment.body|linebreaks }}</div>

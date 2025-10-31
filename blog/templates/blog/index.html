@@ -24,7 +24,7 @@
               </a>
               <hr />
               <p class="card-text text-muted h6 mb-0">
-                <time datetime="{{ post.created_on|date:'Y-m-d\\TH:i:sP }}">{{ post.created_on|date:'M. j, Y' }}</time>
+                <time datetime='{{ post.created_on|date:"c" }}'>{{ post.created_on|date:"M. j, Y" }}</time>
               </p>
             </div>
           </div>
