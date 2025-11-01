@@ -115,7 +115,7 @@ img { max-width: 100%; height: auto; display: block; }
 }
 
 /* Text above image */
-.masthead-text { position: relative; z-index: 1; color: #fff; padding: clamp(1rem, 2.5vw, 2rem); }
+.masthead-text { position: relative; z-index: 1; color: #0a0909; padding: clamp(1rem, 2.5vw, 2rem); }
 
 /* Cards */
 .card {
@@ -179,6 +179,7 @@ img { max-width: 100%; height: auto; display: block; }
     background-color: var(--rt-bg);
     border: var(--rt-accent);
     border-radius: 0.4rem;
+    color: var(--rt-ink);
 }
 .post-subtitle { 
     margin-left: 4%; 
@@ -186,12 +187,13 @@ img { max-width: 100%; height: auto; display: block; }
     background-color: var(--rt-accent-50);
     border: var(--rt-accent);
     border-radius: 0.4rem;
+    color: var(--rt-ink);
 }
 
-.faded { color: #f1f2f4; }
+.faded { color: var(--rt-bg); }
 
 .bg-white {
-  background-color: #f7f8fc;
+  background-color: var(--rt-bg);
   border: var(--rt-accent);
   border-radius: 0.4rem}
 
