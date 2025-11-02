@@ -117,6 +117,20 @@ img { max-width: 100%; height: auto; display: block; }
 /* Text above image */
 .masthead-text { position: relative; z-index: 1; color: #0a0909; padding: clamp(1rem, 2.5vw, 2rem); }
 
+/* --- Hero over image (you added a dark overlay) --- */
+.masthead .faded,
+.masthead .post-subtitle {
+  color: #212529;                       /* dark text with overlay, passes contrast */
+  opacity: 1;
+}
+
+/* --- Dark sections (e.g., footer) need light-muted --- */
+.dark-bg .text-muted,
+.dark-bg .faded {
+  color: #e9ecef;                       /* light gray on dark */
+  opacity: 1;                           /* avoid double-dimming on dark bg */
+}
+
 /* Cards */
 .card {
   background: var(--rt-surface);
@@ -190,16 +204,19 @@ img { max-width: 100%; height: auto; display: block; }
     color: var(--rt-ink);
 }
 
-.faded { color: var(--rt-bg); }
-
-.faded,
-.text-muted {
-  color: #ffffff; /* ~4.5:1 on white for small text */
+.text-muted { 
+  color: var(--rt-muted) !important;   /* e.g. #6b7280 */
+}
+.faded { 
+  color: var(--rt-muted); 
+  opacity: .9;                          /* gentle de-emphasis, still readable */
 }
 
 .masthead .rt-coach {
   color: #1a1a1a; /* ensure headline meets contrast */
 }
+
+
 
 .bg-white {
   background-color: var(--rt-bg);
