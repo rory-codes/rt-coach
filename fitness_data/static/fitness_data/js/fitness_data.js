@@ -1,6 +1,9 @@
+/* jshint esversion: 11, browser: true */
 (function () {
-    const $ = (id) => document.getElementById(id);
-    const LS_KEY = "tenrm_state_v1";
+  'use strict';
+
+  const $ = (id) => document.getElementById(id);
+  const LS_KEY = "tenrm_state_v1";
 
     /* ====== HR ZONES / BMI / WHR ====== */
     const ZONES = [
@@ -10,12 +13,14 @@
         { name: "Zone 4", low: 0.80, high: 0.90 },
         { name: "Zone 5", low: 0.90, high: 1.00 }
     ];
+
     function toNum(v) { const n = parseFloat(v); return Number.isFinite(n) ? n : null; }
     function clamp(n, min, max) { if (!Number.isFinite(n)) return null; return Math.min(Math.max(n, min), max); }
     function calcBMI(w, h) { w = clamp(w, 0, 500); h = clamp(h, 30, 300); if (!Number.isFinite(w) || !Number.isFinite(h)) return null; const m = h / 100; return w / (m * m); }
     function bmiCategory(b) { if (b == null) return ""; if (b < 18.5) return "Underweight"; if (b < 25) return "Normal"; if (b < 30) return "Overweight"; return "Obese"; }
     function calcWHR(w, h) { w = clamp(w, 20, 300); h = clamp(h, 20, 300); if (!Number.isFinite(w) || !Number.isFinite(h) || h <= 0) return null; return w / h; }
     function calcMaxHR(a) { a = clamp(a, 1, 120); if (!Number.isFinite(a)) return null; return 220 - a; }
+
     function calcZones(a, r) {
         a = clamp(a, 1, 120); r = clamp(r, 20, 150);
         const m = calcMaxHR(a);
@@ -24,15 +29,18 @@
         const zones = ZONES.map(z => ({ ...z, lowBpm: Math.round(r + hrr * z.low), highBpm: Math.round(r + hrr * z.high) }));
         return { max: m, hrr, zones };
     }
+
     function renderBMI() {
         const b = calcBMI(toNum($("weightKg")?.value), toNum($("heightCm")?.value));
         if ($("bmiValue")) $("bmiValue").textContent = b ? b.toFixed(1) : "—";
         if ($("bmiNote")) $("bmiNote").textContent = b ? `(${bmiCategory(b)})` : "";
     }
+
     function renderWHR() {
         const v = calcWHR(toNum($("waistCm")?.value), toNum($("hipCm")?.value));
         if ($("whrValue")) $("whrValue").textContent = v ? v.toFixed(2) : "—";
     }
+
     function renderHRZones() {
         const { max, hrr, zones } = calcZones(toNum($("age")?.value), toNum($("rhr")?.value));
         if ($("maxHr")) $("maxHr").textContent = Number.isFinite(max) ? Math.round(max) : "—";
@@ -53,6 +61,7 @@
     /* ====== 10RM SECTION ====== */
     const EXERCISES = ["Chest Press", "Shoulder Press", "Lat Pull Down", "Seated Row", "Leg Press", "Deadlift", "Squat", "Upright Row", "Bicep Curl", "Tricep Pushdown"];
     const PHASES = { endurance: 0.60, hypertrophy: 0.72, strength: 0.85, power: 0.65 };
+
     function kgToLb(kg) { return kg * 2.2046226218; }
     function lbToKg(lb) { return lb / 2.2046226218; }
     function roundToIncrement(val, inc) { if (!Number.isFinite(val) || !Number.isFinite(inc) || inc <= 0) return null; return Math.round(val / inc) * inc; }
@@ -72,14 +81,14 @@
             const col = document.createElement("div");
             col.className = "col-sm-6 col-md-4 col-lg-3";
             col.innerHTML = `
-      <div class="form-check form-switch mb-1">
-        <input class="form-check-input include-switch" type="checkbox" id="${includeId}" checked>
-        <label class="form-check-label small" for="${includeId}">Include</label>
-      </div>
-      <label class="form-label" for="${inputId}">${name} <span class="text-muted">(10RM, kg)</span></label>
-      <input type="number" min="0" step="0.5" class="form-control tenrm-input" id="${inputId}" placeholder="e.g. 40" aria-describedby="${helpId}">
-      <div class="form-text" id="${helpId}">Optional: leave blank to skip.</div>
-    `;
+        <div class="form-check form-switch mb-1">
+          <input class="form-check-input include-switch" type="checkbox" id="${includeId}" checked>
+          <label class="form-check-label small" for="${includeId}">Include</label>
+        </div>
+        <label class="form-label" for="${inputId}">${name} <span class="text-muted">(10RM, kg)</span></label>
+        <input type="number" min="0" step="0.5" class="form-control tenrm-input" id="${inputId}" placeholder="e.g. 40" aria-describedby="${helpId}">
+        <div class="form-text" id="${helpId}">Optional: leave blank to skip.</div>
+      `;
             wrap.appendChild(col);
         });
     }
@@ -99,13 +108,13 @@
         });
     }
 
-
     function computePhaseWeights(oneRm, incKg, units = "kg") {
         if (!Number.isFinite(oneRm)) return { endurance: null, hypertrophy: null, strength: null, power: null };
         const incDisplay = units === "lb" ? kgToLb(incKg) : incKg;
         const roundDisp = (kg) => {
             const disp = units === "lb" ? kgToLb(kg) : kg;
             const r = roundToIncrement(disp, incDisplay);
+            if (r == null) return null;              // guard against null
             return units === "lb" ? lbToKg(r) : r;
         };
         return {
@@ -168,6 +177,7 @@
             localStorage.setItem(LS_KEY, JSON.stringify({ inc, units, rows }));
         } catch (_) { /* ignore quota */ }
     }
+
     function loadState() {
         try {
             const raw = localStorage.getItem(LS_KEY);
@@ -214,6 +224,7 @@
             renderTenRmTable();
         }
     });
+
     document.addEventListener("change", (e) => {
         if (e.target.closest(".tenrm-input") || e.target.classList.contains("include-switch") || e.target.id === "incrementSelect" || e.target.id === "unitsSelect") {
             saveState();
@@ -224,24 +235,25 @@
     $("calc10rmBtn")?.addEventListener("click", renderTenRmTable);
     $("clear10rmBtn")?.addEventListener("click", () => {
         localStorage.removeItem(LS_KEY);
-        document.querySelectorAll(".tenrm-input").forEach(el => el.value = "");
-        document.querySelectorAll(".include-switch").forEach(el => el.checked = true);
+        document.querySelectorAll(".tenrm-input").forEach(el => { el.value = ""; });
+        document.querySelectorAll(".include-switch").forEach(el => { el.checked = true; });
         if ($("incrementSelect")) $("incrementSelect").value = "2.5";
         if ($("unitsSelect")) $("unitsSelect").value = "kg";
         renderTenRmTable();
     });
 
     $("sample10rmBtn")?.addEventListener("click", () => {
-        const samples = [40, 30, 45, 40, 140, 90, 80, 25, 15, 20]; // example kg values
+        const samples = [40, 30, 45, 40, 140, 90, 80, 25, 15, 20];
         samples.forEach((v, i) => { const el = $(`tenrm_${i}`); if (el) el.value = v; });
-        document.querySelectorAll(".include-switch").forEach(chk => chk.checked = true);
+        document.querySelectorAll(".include-switch").forEach(chk => { chk.checked = true; });
         saveState();
         renderTenRmTable();
     });
+
     $("reset10rmBtn")?.addEventListener("click", () => {
         localStorage.removeItem(LS_KEY);
-        document.querySelectorAll(".tenrm-input").forEach(el => el.value = "");
-        document.querySelectorAll(".include-switch").forEach(el => el.checked = true);
+        document.querySelectorAll(".tenrm-input").forEach(el => { el.value = ""; });
+        document.querySelectorAll(".include-switch").forEach(el => { el.checked = true; });
         if ($("incrementSelect")) $("incrementSelect").value = "2.5";
         if ($("unitsSelect")) $("unitsSelect").value = "kg";
         renderTenRmTable();
@@ -254,12 +266,13 @@
         const a = document.createElement("a");
         a.href = URL.createObjectURL(blob);
         a.download = "training_weights.csv";
-        document.body.appendChild(a); a.click(); a.remove();
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
     });
 
+    // Send to Workout (reuses outer $)
     (function () {
-        const $ = (id) => document.getElementById(id);
-        // Map exercise names to the IDs you used in your 10RM inputs
         const EXS = ["Chest Press", "Shoulder Press", "Lat Pull Down", "Seated Row", "Leg Press", "Deadlift", "Squat", "Upright Row", "Bicep Curl", "Tricep Pushdown"];
 
         function gatherTenRM() {
@@ -283,7 +296,10 @@
     // Personal metrics listeners
     $("calcBtn")?.addEventListener("click", renderAllMetrics);
     ["weightKg", "heightCm", "waistCm", "hipCm", "age", "rhr"].forEach(id => $(id)?.addEventListener("input", renderAllMetrics));
-    $("clearBtn")?.addEventListener("click", () => { ["weightKg", "heightCm", "waistCm", "hipCm", "age", "rhr"].forEach(id => $(id).value = ""); renderAllMetrics(); });
+    $("clearBtn")?.addEventListener("click", () => {
+        ["weightKg", "heightCm", "waistCm", "hipCm", "age", "rhr"].forEach(id => { $(id).value = ""; });
+        renderAllMetrics();
+    });
 
     // Initial paints
     renderAllMetrics();
