@@ -1,4 +1,4 @@
-![Home](docs/readme_images/mockup.png)
+top![Home](docs/readme_images/mockup.png)
 
 # RT Coach
 
@@ -286,7 +286,7 @@ NPV -> Member : 302 -> /workout/plan/<id>/
 ### Wireframes
 > `docs/wireframes/wireframe-blog-mobile.png.png`,  
 > `docs/wireframes/wireframe-fitness-tablet.png`,  
-> `docs/wireframes/wireframe-workout-laptop.png'.
+> `docs/wireframes/wireframe-workout-desktop.png'.
 
 **Home (mobile)**  
 ![Blog (mobile)](docs/wireframes/wireframe-blog-mobile.png)
@@ -370,9 +370,9 @@ black --check .
   * Best Practices ≥ 90
   * SEO ≥ 90
 
-![blog (lighthouse blog testing)](docs/wireframes/lighthouse_blog.png)
-![Fitness data (Fitness data testing)](docs/wireframes/lighthouse_fitness.png)
-![Workout (lighthouse workout testing)](docs/wireframes/lighthouse_workout.png)
+![blog (lighthouse blog testing)](docs/read_me_img/lighthouse_blog.png)
+![Fitness data (Fitness data testing)](docs/read_me_img/lighthouse_fitness.png)
+![Workout (lighthouse workout testing)](docs/read_me_img/lighthouse_workout.png)
 
 **Accessibility test table**
 
@@ -385,10 +385,10 @@ black --check .
 ![Workout (Wave)](docs/wireframes/validation_wave.png)
 ---
 **HTML Validation**
-![Workout (HTML Validation)](docs/wireframes/validation_html.png)
+![Workout (HTML Validation)](docs/read_me_img/validation_html.png)
 
 **CSS Validation**
-![Workout (CSS Validation)](docs/wireframes/validation_css.png)
+![Workout (CSS Validation)](docs/read_me_img/validation_css.png)
 ## Local Development
 
 **Prerequisites**
@@ -451,7 +451,7 @@ jobs:
       - run: pytest -q
 ```
 **JS Hint**
-![Workout (JS Hint testing)](docs/wireframes/validation_jest.png)
+![Workout (JS Hint testing)](docs/read_me_img/validation_jshint.png)
 ---
 
 ## Bugs
@@ -673,6 +673,9 @@ python manage.py dbshell
 * Persist fitness inputs to user profile for prefill.
 * Add PDF export for plans.
 * Add calendar integration (ICS).
+* HTML Validation showing errors with time stamps. See below for details:
+  ![Workout (HTML Validation)](docs/read_me_img/validation_html.png)
+  
 
 ---
 
@@ -716,6 +719,7 @@ python manage.py dbshell
 | 5–8 | Build | Z3 threshold | Hypertrophy % loads |
 | 9–11 | Peak | Z4 efforts | Strength % loads |
 | 12 | Deload | Z1–2 | ~50–60% loads |
+
 
 
 
