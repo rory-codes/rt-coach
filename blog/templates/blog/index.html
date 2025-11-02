@@ -22,9 +22,9 @@
                 <h2 class="card-title h5 m-0">{{ post.title }}</h2>
                  <p class="card-text">{{ post.excerpt }}</p>
               </a>
-              <hr />
+              <hr>
               <p class="card-text text-muted h6 mb-0">
-                <time datetime='{{ post.created_on|date:"c" }}'>{{ post.created_on|date:"M. j, Y" }}</time>
+                <time datetime="{{ post.created_on|date:'Y-m-d\\TH:i:sP' }}">{{ post.created_on|date:'M. j, Y' }}</time>
               </p>
             </div>
           </div>
