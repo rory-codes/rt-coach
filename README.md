@@ -295,7 +295,7 @@ NPV -> Member : 302 -> /workout/plan/<id>/
 ![Fitness_data (tablet)](docs/wireframes/wireframe-fitness-tablet.png)
 
 **Plan Detail (desktop)**  
-![Plan Detail (desktop)](docs/wireframes/wireframe-workout-laptop.png)
+![Plan Detail (desktop)](docs/wireframes/wireframe-workout-desktop.png)
 
 ---
 
@@ -719,6 +719,7 @@ python manage.py dbshell
 | 5–8 | Build | Z3 threshold | Hypertrophy % loads |
 | 9–11 | Peak | Z4 efforts | Strength % loads |
 | 12 | Deload | Z1–2 | ~50–60% loads |
+
 
 
 
