@@ -382,8 +382,13 @@ black --check .
 | `/fitness/` | Axe | 0 critical, 0 serious |
 | `/workout/new/` | Axe | 0 critical, 0 serious |
 
+![Workout (Wave)](docs/wireframes/validation_wave.png)
 ---
+**HTML Validation**
+![Workout (HTML Validation)](docs/wireframes/validation_html.png)
 
+**CSS Validation**
+![Workout (CSS Validation)](docs/wireframes/validation_css.png)
 ## Local Development
 
 **Prerequisites**
@@ -445,7 +450,8 @@ jobs:
       - run: black --check .
       - run: pytest -q
 ```
-
+**JS Hint**
+![Workout (JS Hint testing)](docs/wireframes/validation_jest.png)
 ---
 
 ## Bugs
@@ -710,5 +716,6 @@ python manage.py dbshell
 | 5–8 | Build | Z3 threshold | Hypertrophy % loads |
 | 9–11 | Peak | Z4 efforts | Strength % loads |
 | 12 | Deload | Z1–2 | ~50–60% loads |
+
 
 
