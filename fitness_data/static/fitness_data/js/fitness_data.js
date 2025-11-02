@@ -57,22 +57,29 @@
     function lbToKg(lb) { return lb / 2.2046226218; }
     function roundToIncrement(val, inc) { if (!Number.isFinite(val) || !Number.isFinite(inc) || inc <= 0) return null; return Math.round(val / inc) * inc; }
     function fmt(v, units) { if (!Number.isFinite(v)) return "—"; return (units === "lb" ? kgToLb(v) : v).toFixed(1); }
+    function tenrmInputId(idx) { return `tenrm_${idx}`; }
+    function tenrmIncludeId(idx) { return `inc_tenrm_${idx}`; }
+    function tenrmHelpId(idx) { return `tenrm_${idx}_help`; }
 
     function renderTenRmInputs() {
         const wrap = $("tenRmInputs"); if (!wrap) return;
         wrap.innerHTML = "";
         EXERCISES.forEach((name, idx) => {
-            const id = `tenrm_${idx}`;
+            const inputId = tenrmInputId(idx);
+            const includeId = tenrmIncludeId(idx);
+            const helpId = tenrmHelpId(idx);
+
             const col = document.createElement("div");
             col.className = "col-sm-6 col-md-4 col-lg-3";
             col.innerHTML = `
-        <div class="form-check form-switch mb-1">
-          <input class="form-check-input include-switch" type="checkbox" id="inc_${id}" checked>
-          <label class="form-check-label small" for="inc_${id}">Include</label>
-        </div>
-        <label class="form-label">${name} (10RM, kg)</label>
-        <input type="number" min="0" step="0.5" class="form-control tenrm-input" id="${id}" placeholder="e.g. 40">
-        <div class="form-text">Optional: leave blank to skip.</div>`;
+      <div class="form-check form-switch mb-1">
+        <input class="form-check-input include-switch" type="checkbox" id="${includeId}" checked>
+        <label class="form-check-label small" for="${includeId}">Include</label>
+      </div>
+      <label class="form-label" for="${inputId}">${name} <span class="text-muted">(10RM, kg)</span></label>
+      <input type="number" min="0" step="0.5" class="form-control tenrm-input" id="${inputId}" placeholder="e.g. 40" aria-describedby="${helpId}">
+      <div class="form-text" id="${helpId}">Optional: leave blank to skip.</div>
+    `;
             wrap.appendChild(col);
         });
     }
@@ -81,11 +88,17 @@
 
     function readTenRmEntries() {
         return EXERCISES.map((name, idx) => {
-            const v = parseFloat(($(`tenrm_${idx}`) || {}).value);
-            const include = ($(`inc_tenrm_${idx}`) || $(`inc_${`tenrm_${idx}`}`))?.checked ?? true;
-            return { name, tenrm: Number.isFinite(v) ? v : null, include };
+            const input = $(tenrmInputId(idx));
+            const includeSw = $(tenrmIncludeId(idx));
+            const v = input ? parseFloat(input.value) : NaN;
+            return {
+                name,
+                tenrm: Number.isFinite(v) ? v : null,
+                include: includeSw ? !!includeSw.checked : true
+            };
         });
     }
+
 
     function computePhaseWeights(oneRm, incKg, units = "kg") {
         if (!Number.isFinite(oneRm)) return { endurance: null, hypertrophy: null, strength: null, power: null };
@@ -148,10 +161,12 @@
         const inc = ($("incrementSelect") || {}).value;
         const units = ($("unitsSelect") || {}).value;
         const rows = EXERCISES.map((_, idx) => ({
-            v: parseFloat(($(`tenrm_${idx}`) || {}).value),
-            inc: ($(`inc_${`tenrm_${idx}`}`) || {}).checked
+            v: parseFloat(($(tenrmInputId(idx)) || {}).value),
+            inc: ($(tenrmIncludeId(idx)) || {}).checked
         }));
-        try { localStorage.setItem(LS_KEY, JSON.stringify({ inc, units, rows })); } catch (_) { }
+        try {
+            localStorage.setItem(LS_KEY, JSON.stringify({ inc, units, rows }));
+        } catch (_) { /* ignore quota */ }
     }
     function loadState() {
         try {
@@ -160,13 +175,14 @@
             const data = JSON.parse(raw);
             if (data.inc && $("incrementSelect")) $("incrementSelect").value = data.inc;
             if (data.units && $("unitsSelect")) $("unitsSelect").value = data.units;
+
             data.rows?.forEach((r, idx) => {
-                const input = $(`tenrm_${idx}`);
-                const sw = $(`inc_${`tenrm_${idx}`}`);
+                const input = $(tenrmInputId(idx));
+                const sw = $(tenrmIncludeId(idx));
                 if (input && Number.isFinite(r.v)) input.value = r.v;
                 if (sw != null && typeof r.inc === "boolean") sw.checked = r.inc;
             });
-        } catch (e) { }
+        } catch (_) { /* ignore parse errors */ }
     }
 
     // CSV export
@@ -241,28 +257,28 @@
         document.body.appendChild(a); a.click(); a.remove();
     });
 
-    (function(){
-    const $ = (id) => document.getElementById(id);
-    // Map exercise names to the IDs you used in your 10RM inputs
-    const EXS = ["Chest Press","Shoulder Press","Lat Pull Down","Seated Row","Leg Press","Deadlift","Squat","Upright Row","Bicep Curl","Tricep Pushdown"];
+    (function () {
+        const $ = (id) => document.getElementById(id);
+        // Map exercise names to the IDs you used in your 10RM inputs
+        const EXS = ["Chest Press", "Shoulder Press", "Lat Pull Down", "Seated Row", "Leg Press", "Deadlift", "Squat", "Upright Row", "Bicep Curl", "Tricep Pushdown"];
 
-    function gatherTenRM(){
-      const out = {};
-      EXS.forEach((name, idx)=>{
-        const el = document.getElementById(`tenrm_${idx}`);
-        const v = el ? parseFloat(el.value) : NaN;
-        if (Number.isFinite(v) && v > 0) out[name] = v;
-      });
-      return out;
-    }
+        function gatherTenRM() {
+            const out = {};
+            EXS.forEach((name, idx) => {
+                const el = document.getElementById(`tenrm_${idx}`);
+                const v = el ? parseFloat(el.value) : NaN;
+                if (Number.isFinite(v) && v > 0) out[name] = v;
+            });
+            return out;
+        }
 
-    document.getElementById("sendToWorkoutBtn")?.addEventListener("click", ()=>{
-      $("wf_age").value = (document.getElementById("age")?.value) || "";
-      $("wf_rhr").value = (document.getElementById("rhr")?.value) || "";
-      $("wf_tenrm_json").value = JSON.stringify(gatherTenRM());
-      document.getElementById("toWorkoutForm").submit();
-    });
-  })();
+        document.getElementById("sendToWorkoutBtn")?.addEventListener("click", () => {
+            $("wf_age").value = (document.getElementById("age")?.value) || "";
+            $("wf_rhr").value = (document.getElementById("rhr")?.value) || "";
+            $("wf_tenrm_json").value = JSON.stringify(gatherTenRM());
+            document.getElementById("toWorkoutForm").submit();
+        });
+    })();
 
     // Personal metrics listeners
     $("calcBtn")?.addEventListener("click", renderAllMetrics);
