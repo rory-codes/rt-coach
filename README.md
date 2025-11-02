@@ -382,13 +382,15 @@ black --check .
 | `/fitness/` | Axe | 0 critical, 0 serious |
 | `/workout/new/` | Axe | 0 critical, 0 serious |
 
-![Workout (Wave)](docs/wireframes/validation_wave.png)
 ---
+**Wave**
+![Wave (Wave Validation)](docs/read_me_img/validation_wave.png)
+
 **HTML Validation**
-![Workout (HTML Validation)](docs/read_me_img/validation_html.png)
+![RT Coach (HTML Validation)](docs/read_me_img/validation_html.png)
 
 **CSS Validation**
-![Workout (CSS Validation)](docs/read_me_img/validation_css.png)
+![RT Coach (CSS Validation)](docs/read_me_img/validation_css.png)
 ## Local Development
 
 **Prerequisites**
@@ -675,6 +677,7 @@ python manage.py dbshell
 * Add calendar integration (ICS).
 * HTML Validation showing errors with time stamps. See below for details:
   ![Workout (HTML Validation)](docs/read_me_img/validation_html.png)
+*Improve performance on fitness and workout pages to over 90.
   
 
 ---
