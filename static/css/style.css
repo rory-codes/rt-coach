@@ -58,7 +58,7 @@ a:hover { text-decoration: underline; }
 img { max-width: 100%; height: auto; display: block; }
 
 .main-bg { background-color: var(--rt-bg); }
-.light-bg { background-color: var(--rt-surface); }
+.light-bg {  background: #f8f9fa; }
 .dark-bg  { background-color: var(--rt-ink-2); color: #fff; }
 
 /* Navbar */
@@ -191,6 +191,15 @@ img { max-width: 100%; height: auto; display: block; }
 }
 
 .faded { color: var(--rt-bg); }
+
+.faded,
+.text-muted {
+  color: #ffffff; /* ~4.5:1 on white for small text */
+}
+
+.masthead .rt-coach {
+  color: #1a1a1a; /* ensure headline meets contrast */
+}
 
 .bg-white {
   background-color: var(--rt-bg);
