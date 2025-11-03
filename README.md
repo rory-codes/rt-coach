@@ -1,4 +1,4 @@
-top![Home](docs/readme_images/mockup.png)
+top![Home](docs/read_me_img/mockup.png)
 
 # RT Coach
 
@@ -719,6 +719,7 @@ python manage.py dbshell
 | 5–8 | Build | Z3 threshold | Hypertrophy % loads |
 | 9–11 | Peak | Z4 efforts | Strength % loads |
 | 12 | Deload | Z1–2 | ~50–60% loads |
+
 
 
 
