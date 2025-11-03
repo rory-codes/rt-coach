@@ -103,17 +103,14 @@ A Django web app for publishing training content, capturing personal metrics (BM
 
 | ID | Priority | Story | Acceptance Criteria |
 | --- | --- | --- | --- |
-| W1 | Must | As a member, I can create a plan by experience level & goal. | **Given** I’m logged in **When** I submit the form **Then** A plan is saved and shown at `/workout/plan/<id>/`. |
-| W2 | Must | The plan uses my Fitness Data (HR zones / loads). | **Given** My inputs exist **When** I create a plan **Then** It derives HR targets and resistance loads per phase/week. |
-| W3 | Should | I can export a plan as CSV. | **Given** Plan exists **When** I click Export CSV **Then** File downloads with weekly structure. |
-| W4 | Could | I can view my plans list. | **Given** I’m logged in **When** I open `/workout/` **Then** I see my plans. |
+| W1 | Must | As a member, I can create a plan by experience level & goal.The plan uses my Fitness Data (HR zones / loads). | **Given** I’m logged in **When** I submit the form **Then** A plan is saved and shown at `/workout/plan/<id>/`. **Given** My inputs exist **When** I create a plan **Then** It derives HR targets and resistance loads per phase/week. | 
 
 ### Accounts & Admin
 
 | ID | Priority | Story | Acceptance Criteria |
 | --- | --- | --- | --- |
-| A1 | Must | As an admin, I want to manage posts/comments in Django admin. | Standard Django admin flows. |
-| A2 | Should | As admin, I can toggle moderation. | Setting or field controls approval workflow. |
+| A1 | Must | As an admin, I want to manage posts/comments in Django admin and I can toggle moderation. | Standard Django admin flows. Setting or field controls approval workflow.|
+
 
 ## System Design
 
@@ -722,6 +719,7 @@ python manage.py dbshell
 | 5–8 | Build | Z3 threshold | Hypertrophy % loads |
 | 9–11 | Peak | Z4 efforts | Strength % loads |
 | 12 | Deload | Z1–2 | ~50–60% loads |
+
 
 
 
