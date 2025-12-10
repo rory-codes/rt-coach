@@ -2,8 +2,8 @@
 
 # RT Coach
 
-![Live site](https://rt-coach-b6ced22546ee.herokuapp.com/)
-![Github repository]( https://github.com/rory-codes/rt-coach/)
+[Click here for live site](https://rt-coach-b6ced22546ee.herokuapp.com/)
+[Click here for Github repository]( https://github.com/rory-codes/rt-coach/)
 
 ---
 
@@ -373,6 +373,7 @@ Thanks to tutors, peers, and resources that informed the project work.
 | 5–8 | Build | Zone-3 threshold | Hypertrophy % loads |
 | 9–11 | Peak | Zone-4 efforts | Strength % loads |
 | 12 | Deload | Zone-1/2 | ~50–60% loads |
+
 
 
 
