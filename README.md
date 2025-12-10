@@ -2,8 +2,8 @@
 
 # RT Coach
 
-[Live site](https://rt-coach-b6ced22546ee.herokuapp.com/)
-[Github repository] ( https://github.com/rory-codes/rt-coach/)
+![Live site](https://rt-coach-b6ced22546ee.herokuapp.com/)
+![Github repository] ( https://github.com/rory-codes/rt-coach/)
 
 ---
 
@@ -254,12 +254,12 @@ black --check .
 * **Axe / WAVE:** no critical issues; all form controls have labels; contrast OK.  
 * **Lighthouse targets:** Performance ≥ 90; Accessibility ≥ 90; Best Practices ≥ 90; SEO ≥ 90.
 
-Screenshots:  
+## Screenshots:  
 ![Blog Lighthouse](docs/read_me_img/lighthouse_blog.png)  
 ![Fitness Lighthouse](docs/read_me_img/lighthouse_fitness.png)  
 ![Workout Lighthouse](docs/read_me_img/lighthouse_workout.png)
 
-Additional validators:  
+## Additional validators:  
 **WAVE**  
 ![WAVE](docs/read_me_img/validation_wave.png)  
 
@@ -373,6 +373,7 @@ Thanks to tutors, peers, and resources that informed the project work.
 | 5–8 | Build | Zone-3 threshold | Hypertrophy % loads |
 | 9–11 | Peak | Zone-4 efforts | Strength % loads |
 | 12 | Deload | Zone-1/2 | ~50–60% loads |
+
 
 
 
