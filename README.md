@@ -3,7 +3,6 @@
 # RT Coach
 
 [Click here for live site](https://rt-coach-b6ced22546ee.herokuapp.com/)
-[Click here for Github repository]( https://github.com/rory-codes/rt-coach/)
 
 ---
 
@@ -59,17 +58,17 @@ RT Coach is a Django web app that publishes training content, provides fitness c
 **Reader**  
 * *Goal:* consume training content without logging in.  
 * *Needs:* fast loading, readable typography, simple navigation.  
-* *Pain points:* paywalls, noisy UI, slow pages.
+* *issues:* paywalls, noisy UI, slow pages.
 
 **Member**  
 * *Goal:* comment on posts and generate personalised 12-week plans.  
 * *Needs:* clear forms, helpful error messages, CSV export.  
-* *Pain points:* complex forms, unclear validation, losing work.
+* *issues:* complex forms, unclear validation, losing work.
 
 **Coach / Admin**  
 * *Goal:* publish/manage posts, moderate comments.  
 * *Needs:* efficient admin lists, filters, moderation toggles.  
-* *Pain points:* manual busywork, confusing admin navigation.
+* *issues:* manual busywork, confusing admin navigation.
 
 ### User Stories (MoSCoW)
 
@@ -155,7 +154,7 @@ RT Coach is a Django web app that publishes training content, provides fitness c
 ## Data Model
 
 ### Entity–Relationship Diagram
-![ER diagram](docs/er/rt_coach_erd.png)
+![ER diagram](docs/read_me_img/rt_coach_erd.png)
 
 ### Schema Details
 **Blog app**  
@@ -373,6 +372,7 @@ Thanks to tutors, peers, and resources that informed the project work.
 | 5–8 | Build | Zone-3 threshold | Hypertrophy % loads |
 | 9–11 | Peak | Zone-4 efforts | Strength % loads |
 | 12 | Deload | Zone-1/2 | ~50–60% loads |
+
 
 
 
