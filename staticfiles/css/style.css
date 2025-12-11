@@ -59,7 +59,7 @@ img { max-width: 100%; height: auto; display: block; }
 
 .main-bg { background-color: var(--rt-bg); }
 .light-bg { background-color: var(--rt-surface); }
-.dark-bg  { background-color: var(--rt-ink-2); color: #fff; }
+.dark-bg  { background-color: var(--rt-ink-2); color: #000000; }
 
 /* Navbar */
 .navbar-light.bg-white {
